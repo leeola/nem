@@ -1,0 +1,13 @@
+[package]
+name = "ifp"
+version = "0.1.0"
+authors = ["Lee Olayvar <leeola@fastmail.com>"]
+edition = "2018"
+
+[features]
+default = ["db", "api"]
+api = ["infopub/api"]
+db = ["infopub/db", "infopub/sqlite"]
+
+[dependencies]
+infopub = { path = "../infopub" }

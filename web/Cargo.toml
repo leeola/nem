@@ -1,0 +1,13 @@
+[package]
+name = "infopub_server"
+version = "0.1.0"
+authors = ["Lee Olayvar <leeola@fastmail.com>"]
+edition = "2018"
+
+[features]
+default = ["infopub/db", "infopub/sqlite"]
+
+[dependencies]
+infopub = { path = "../infopub" }
+rocket_contrib = "0.4.2"
+rocket = "0.4.2"
