@@ -1,13 +1,13 @@
 [package]
-name = "ifp"
+name = "nem"
 version = "0.1.0"
 authors = ["Lee Olayvar <leeola@fastmail.com>"]
 edition = "2018"
 
 [features]
 default = ["db", "api"]
-api = ["infopub/api"]
-db = ["infopub/db", "infopub/sqlite"]
+api = ["mnemosyne/api"]
+db = ["mnemosyne/db", "mnemosyne/sqlite"]
 
 [dependencies]
-infopub = { path = "../infopub" }
+mnemosyne = { path = "../mnemosyne" }

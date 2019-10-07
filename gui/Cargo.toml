@@ -1,5 +1,5 @@
 [package]
-name = "infopub_gui"
+name = "mnemosyne_gui"
 version = "0.1.0"
 authors = ["Lee Olayvar <leeola@fastmail.com>"]
 edition = "2018"
