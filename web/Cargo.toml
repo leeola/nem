@@ -1,5 +1,5 @@
 [package]
-name = "mnemosyne_web"
+name = "mnemosyne-web"
 version = "0.1.0"
 authors = ["Lee Olayvar <leeola@fastmail.com>"]
 edition = "2018"
@@ -8,9 +8,12 @@ edition = "2018"
 
 [features]
 default = ["mnemosyne/db", "mnemosyne/sqlite"]
+templates-reload = []
 
 [dependencies]
 mnemosyne = { path = "../mnemosyne" }
 mnemosyne_gui = { path = "../gui" }
 rocket_contrib = "0.4.2"
 rocket = "0.4.2"
+handlebars = "2.0.2"
+serde = { version = "1.0.101", features = ["derive"] }
