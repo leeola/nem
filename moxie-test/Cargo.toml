@@ -1,0 +1,15 @@
+[package]
+name = "moxie-test"
+version = "0.1.0"
+authors = ["Lee Olayvar <leeola@fastmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+seed = "0.4.0"
+wasm-bindgen = "0.2.48"
+web-sys = "0.3.25"
+
+[lib]
+crate-type = ["cdylib"]
