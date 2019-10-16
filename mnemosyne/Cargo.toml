@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Lee Olayvar <leeola@fastmail.com>"]
 edition = "2018"
 
+[lib]
+name = "mnemosyne"
+path = "src/lib.rs"
+
 [features]
 api = ["serde"]
 db = []
