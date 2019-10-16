@@ -15,6 +15,14 @@ pub enum Error {
 
 impl<'r> Responder<'r> for Error {
   fn respond_to(self, _: &Request) -> response::Result<'r> {
-    Response::build().sized_body(Cursor::new("oops")).ok()
+    Response::build()
+      .sized_body(Cursor::new("error handling not implemented"))
+      .ok()
   }
+}
+
+#[derive(Debug)]
+pub enum InitError {
+  PathNotValidString,
+  RocketConfig(rocket::config::ConfigError),
 }

@@ -1,10 +1,16 @@
 [package]
-name = "mnemosyne-web"
+name = "nem-server"
 version = "0.1.0"
 authors = ["Lee Olayvar <leeola@fastmail.com>"]
 edition = "2018"
 
+[lib]
+name = "nem_server"
+path = "src/lib.rs"
 
+[[bin]]
+name = "nem-server"
+path = "src/bin/nem_server.rs"
 
 [features]
 default = ["mnemosyne/db", "mnemosyne/sqlite"]
@@ -17,3 +23,4 @@ rocket_contrib = "0.4.2"
 rocket = "0.4.2"
 handlebars = "2.0.2"
 serde = { version = "1.0.101", features = ["derive"] }
+structopt = "0.3.3"
