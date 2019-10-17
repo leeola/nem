@@ -440,7 +440,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mnemosyne_gui"
+name = "mnemosyne-gui"
 version = "0.1.0"
 
 [[package]]
@@ -456,7 +456,7 @@ version = "0.1.0"
 dependencies = [
  "handlebars 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "mnemosyne 0.1.0",
- "mnemosyne_gui 0.1.0",
+ "mnemosyne-gui 0.1.0",
  "rocket 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_contrib 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.101 (registry+https://github.com/rust-lang/crates.io-index)",

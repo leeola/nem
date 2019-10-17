@@ -18,7 +18,7 @@ templates-reload = []
 
 [dependencies]
 mnemosyne = { path = "../mnemosyne" }
-mnemosyne_gui = { path = "../gui" }
+mnemosyne-gui = { path = "../gui" }
 rocket_contrib = "0.4.2"
 rocket = "0.4.2"
 handlebars = "2.0.2"
