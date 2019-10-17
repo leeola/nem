@@ -13,7 +13,8 @@ name = "nem-server"
 path = "src/bin/nem_server.rs"
 
 [features]
-default = ["mnemosyne/db", "mnemosyne/sqlite"]
+default = ["mnemosyne/db", "mnemosyne/sqlite", "hosted"]
+hosted = []
 templates-reload = []
 
 [dependencies]
@@ -24,3 +25,4 @@ rocket = { git = "https://github.com/SergioBenitez/Rocket" }
 handlebars = "2.0.2"
 serde = { version = "1.0.101", features = ["derive"] }
 structopt = "0.3.3"
+acme-lib = { version = "0.5.2", optional = true }
