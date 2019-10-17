@@ -19,8 +19,8 @@ templates-reload = []
 [dependencies]
 mnemosyne = { path = "../mnemosyne" }
 mnemosyne-gui = { path = "../gui" }
-rocket_contrib = "0.4.2"
-rocket = "0.4.2"
+rocket_contrib = { git = "https://github.com/SergioBenitez/Rocket" }
+rocket = { git = "https://github.com/SergioBenitez/Rocket" }
 handlebars = "2.0.2"
 serde = { version = "1.0.101", features = ["derive"] }
 structopt = "0.3.3"
