@@ -1,6 +1,6 @@
 [package]
 name = "nem"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Lee Olayvar <leeola@fastmail.com>"]
 edition = "2018"
 

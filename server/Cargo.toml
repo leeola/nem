@@ -1,6 +1,6 @@
 [package]
 name = "nem-server"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Lee Olayvar <leeola@fastmail.com>"]
 edition = "2018"
 
@@ -24,7 +24,7 @@ rocket_contrib = { git = "https://github.com/SergioBenitez/Rocket" }
 rocket = { git = "https://github.com/SergioBenitez/Rocket" }
 handlebars = "2.0.2"
 serde = { version = "1.0.101", features = ["derive"] }
-structopt = "0.3.3"
 acme-lib = { version = "0.5.2", optional = true }
 log = "0.4.8"
 env_logger = "0.7.1"
+clap = "2.33.0"

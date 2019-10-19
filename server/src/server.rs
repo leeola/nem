@@ -24,12 +24,14 @@ pub struct Config {
   /// Optional, TLS related configuration.
   ///
   /// If set, TLS is used.
-  pub tls: Option<TlsConfig>,
+  pub tls: TlsConfig,
 }
 
 /// TLS related configuration.
 pub enum TlsConfig {
-  ManualTls {
+  /// No TLS configured.
+  None,
+  Manual {
     /// The path to a certificate chain corresponding to the private key.
     ///
     /// The certificate chain must be in X.509 PEM format.
@@ -39,7 +41,7 @@ pub enum TlsConfig {
     /// The private key must be an RSA key in either PKCS#1 or PKCS#8 PEM format.
     key: String,
   },
-  AutomaticTls {
+  Automatic {
     /// The Acme account to use, typically a LetsEncrypt account email.
     account: String,
     /// The Acme domain that this server will be running on.
@@ -66,39 +68,37 @@ pub fn build(config: Config) -> Result<Rocket, InitError> {
 
   // apply TLS, if configured.
   let rocket_config = match config.tls {
-    Some(tls_config) => match tls_config {
-      TlsConfig::ManualTls { certs, key } => rocket_config.tls(certs, key),
-      TlsConfig::AutomaticTls {
+    TlsConfig::None => rocket_config,
+    TlsConfig::Manual { certs, key } => rocket_config.tls(certs, key),
+    TlsConfig::Automatic {
+      account,
+      domain,
+      use_staging,
+    } => {
+      // first, create Acme and fetch TLS from it. This will create everything needed,
+      // or fetch existing TLS if not needed.
+      let acme = Acme::new(AcmeConfig {
         account,
         domain,
         use_staging,
-      } => {
-        // first, create Acme and fetch TLS from it. This will create everything needed,
-        // or fetch existing TLS if not needed.
-        let acme = Acme::new(AcmeConfig {
-          account,
-          domain,
-          use_staging,
-          persist: PersistConfig::File {
-            storage_path: config.storage.join("acme"),
-          },
-        });
-        let tls_paths = acme.tls_to_dir(config.storage.join("rocket_tls"))?;
-        let certs = tls_paths
-          .cert
-          .to_str()
-          .ok_or_else(|| InitError::InvalidAcmePath(tls_paths.cert.clone()))?
-          .to_owned();
-        let key = tls_paths
-          .key
-          .to_str()
-          .ok_or_else(|| InitError::InvalidAcmePath(tls_paths.key.clone()))?
-          .to_owned();
-        // acme.monitor();
-        rocket_config.tls(certs, key)
-      }
-    },
-    None => rocket_config,
+        persist: PersistConfig::File {
+          storage_path: config.storage.join("acme"),
+        },
+      });
+      let tls_paths = acme.tls_to_dir(config.storage.join("rocket_tls"))?;
+      let certs = tls_paths
+        .cert
+        .to_str()
+        .ok_or_else(|| InitError::InvalidAcmePath(tls_paths.cert.clone()))?
+        .to_owned();
+      let key = tls_paths
+        .key
+        .to_str()
+        .ok_or_else(|| InitError::InvalidAcmePath(tls_paths.key.clone()))?
+        .to_owned();
+      // acme.monitor();
+      rocket_config.tls(certs, key)
+    }
   };
 
   let rocket_config = rocket_config.finalize()?;
@@ -112,5 +112,14 @@ pub fn build(config: Config) -> Result<Rocket, InitError> {
 impl From<rocket::config::ConfigError> for InitError {
   fn from(err: rocket::config::ConfigError) -> Self {
     InitError::RocketConfig(err)
+  }
+}
+
+impl TlsConfig {
+  pub fn is_using_tls(&self) -> bool {
+    match self {
+      TlsConfig::None => false,
+      TlsConfig::Manual { .. } | TlsConfig::Automatic { .. } => true,
+    }
   }
 }
