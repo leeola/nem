@@ -8,6 +8,8 @@ use {
 };
 
 /// The Nem Server.
+///
+/// NOTE: The CLI will be switching to pure Clap soon, to exploit ArgGroups.
 #[derive(StructOpt)]
 pub struct CLIConfig {
   #[structopt(subcommand)]
@@ -21,14 +23,16 @@ pub enum CLICommand {
 
 #[derive(StructOpt)]
 pub struct ServeCmdConfig {
+  #[structopt(long)]
+  pub storage: PathBuf,
   /// The port to run the Nem Server on.
-  #[structopt(default_value = "4300")]
+  #[structopt(long, default_value = "4300")]
   pub port: u16,
   /// The address to run the Nem Server on.
   ///
   /// Typically you'll want to set this to 0.0.0.0 if you want it reachable outside of your
   /// local machine.
-  #[structopt(default_value = "127.0.0.1")]
+  #[structopt(long, default_value = "127.0.0.1")]
   pub address: String,
   /// The path to a certificate chain corresponding to the private key.
   ///
@@ -36,6 +40,7 @@ pub struct ServeCmdConfig {
   ///
   /// If you're running this locally, you can ignore this field. This is used to enable HTTPS
   /// when running on servers with a domain.
+  #[structopt(long)]
   pub certs: Option<PathBuf>,
   /// The path to a private key file corresponding to the certificate chain.
   ///
@@ -43,10 +48,17 @@ pub struct ServeCmdConfig {
   ///
   /// If you're running this locally, you can ignore this field. This is used to enable HTTPS
   /// when running on servers with a domain.
+  #[structopt(long)]
   pub key: Option<PathBuf>,
+  #[structopt(long)]
+  pub acme_account: Option<String>,
+  #[structopt(long)]
+  pub acme_domain: Option<String>,
 }
 
 fn main() {
+  env_logger::init_from_env(env_logger::Env::new().filter_or("NEM_LOG", "info"));
+
   let cli_config = CLIConfig::from_args();
   let server_config = cli_config.try_into().expect("invalid CLI Config");
   server::build(server_config)
@@ -61,7 +73,7 @@ impl TryFrom<CLIConfig> for server::Config {
       CLICommand::Serve(serve_config) => {
         let certs = serve_config
           .certs
-          .map(|cert| {
+          .map(|cert| -> Result<_, Self::Error> {
             let cert = cert
               .to_str()
               .ok_or_else(|| "--certs must be valid UTF8 String")?
@@ -71,7 +83,7 @@ impl TryFrom<CLIConfig> for server::Config {
           .unwrap_or_else(|| Ok(None))?;
         let key = serve_config
           .key
-          .map(|key| {
+          .map(|key| -> Result<_, Self::Error> {
             let key = key
               .to_str()
               .ok_or_else(|| "--key must be valid UTF8 String")?
@@ -80,10 +92,11 @@ impl TryFrom<CLIConfig> for server::Config {
           })
           .unwrap_or_else(|| Ok(None))?;
         Self {
+          storage: serve_config.storage,
           port: serve_config.port,
           address: serve_config.address,
           tls: match (certs, key) {
-            (Some(certs), Some(key)) => Some(server::TLSConfig { certs, key }),
+            (Some(certs), Some(key)) => Some(server::TlsConfig::ManualTls { certs, key }),
             (None, None) => None,
             _ => return Err("--certs and --key must be passed together or not at all"),
           },
