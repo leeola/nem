@@ -506,18 +506,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "mnemosyne-gui"
-version = "0.0.1"
-
-[[package]]
-name = "nem"
+name = "mnemosyne-cli"
 version = "0.0.1"
 dependencies = [
  "mnemosyne 0.0.1",
 ]
 
 [[package]]
-name = "nem-server"
+name = "mnemosyne-gui"
+version = "0.0.1"
+
+[[package]]
+name = "mnemosyne-server"
 version = "0.0.1"
 dependencies = [
  "acme-lib 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",

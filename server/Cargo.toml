@@ -1,11 +1,11 @@
 [package]
-name = "nem-server"
+name = "mnemosyne-server"
 version = "0.0.1"
 authors = ["Lee Olayvar <leeola@fastmail.com>"]
 edition = "2018"
 
 [lib]
-name = "nem_server"
+name = "mnemosyne_server"
 path = "src/lib.rs"
 
 [[bin]]
