@@ -2,7 +2,7 @@
 
 use {
   clap::{App, Arg, ArgGroup, SubCommand},
-  nem_server::server::{self, Config, TlsConfig},
+  mnemosyne_server::server::{self, Config, TlsConfig},
   std::path::PathBuf,
 };
 
