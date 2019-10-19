@@ -1,9 +1,10 @@
 use {
+  crate::acme,
   rocket::{
     response::{self, Responder},
     Request, Response,
   },
-  std::io::Cursor,
+  std::{io::Cursor, path::PathBuf},
 };
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -23,6 +24,13 @@ impl<'r> Responder<'r> for Error {
 
 #[derive(Debug)]
 pub enum InitError {
-  PathNotValidString,
+  Acme(acme::Error),
+  InvalidAcmePath(PathBuf),
   RocketConfig(rocket::config::ConfigError),
+}
+
+impl From<acme::Error> for InitError {
+  fn from(err: acme::Error) -> Self {
+    Self::Acme(err)
+  }
 }
