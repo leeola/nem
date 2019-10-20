@@ -20,8 +20,8 @@ templates-reload = []
 [dependencies]
 mnemosyne = { path = "../mnemosyne" }
 mnemosyne-gui = { path = "../gui" }
-rocket_contrib = { git = "https://github.com/SergioBenitez/Rocket" }
-rocket = { git = "https://github.com/SergioBenitez/Rocket" }
+rocket_contrib = { git = "https://github.com/SergioBenitez/Rocket", rev = "4e6a7ddd"  }
+rocket = { git = "https://github.com/SergioBenitez/Rocket", rev = "4e6a7ddd" }
 handlebars = "2.0.2"
 serde = { version = "1.0.101", features = ["derive"] }
 acme-lib = { version = "0.5.2", optional = true }
