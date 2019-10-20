@@ -24,6 +24,8 @@ impl<'r> Responder<'r> for Error {
 
 #[derive(Debug)]
 pub enum InitError {
+  /// A Server was called with an Acme TLS config, or vice versa.
+  InvalidServerTlsVariant,
   Acme(acme::Error),
   InvalidAcmePath(PathBuf),
   RocketConfig(rocket::config::ConfigError),

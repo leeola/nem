@@ -2,7 +2,7 @@
 
 use {
   clap::{App, Arg, ArgGroup, SubCommand},
-  mnemosyne_server::server::{self, Config, TlsConfig},
+  mnemosyne_server::server::{Config, Server, ServerWithAcme, TlsAutomaticConfig, TlsConfig},
   std::path::PathBuf,
 };
 
@@ -70,6 +70,22 @@ fn main() {
             .takes_value(true),
         )
         .arg(
+          Arg::with_name("acme-http-port")
+            .long("acme-http-port")
+            .value_name("PORT")
+            .help("The port that ACME HTTP challenges will run on, typically 80")
+            .default_value("80")
+            .takes_value(true),
+        )
+        .arg(
+          Arg::with_name("acme-http-address")
+            .long("acme-http-address")
+            .value_name("PORT")
+            .help("The address that ACME HTTP challenges will run on, typically 0.0.0.0")
+            .default_value("0.0.0.0")
+            .takes_value(true),
+        )
+        .arg(
           Arg::with_name("lets-encrypt-staging")
             .long("lets-encrypt-staging")
             .help("Use the staging server for LetsEncrypt, good for development testing and avoiding Rate Limit blocking.")
@@ -85,8 +101,8 @@ fn main() {
         .group(
           ArgGroup::with_name("acme")
             .multiple(true)
-            .args(&["acme-account", "acme-domain", "lets-encrypt-staging"])
-            .requires_all(&["acme-account", "acme-domain"])
+            .args(&["acme-account", "acme-domain", "lets-encrypt-staging", "acme-http-port", "acme-http-address"])
+            .requires_all(&["acme-account", "acme-domain", "acme-http-address", "acme-http-port"])
             .conflicts_with_all(&["port", "https"]),
         ),
     )
@@ -124,7 +140,7 @@ fn main() {
         .map(|s| s.to_owned())
         .expect("--https-key impossibly missing"),
     },
-    (false, true) => TlsConfig::Automatic {
+    (false, true) => TlsConfig::Automatic(TlsAutomaticConfig {
       account: matches
         .value_of("acme-account")
         .map(|s| s.to_owned())
@@ -134,7 +150,15 @@ fn main() {
         .map(|s| s.to_owned())
         .expect("--acme-domain impossibly missing"),
       use_staging,
-    },
+      port: matches
+        .value_of("acme-http-port")
+        .map(|s| s.parse::<u16>().expect("invalid --acme-http-port"))
+        .expect("--acme-http-port impossibly missing"),
+      address: matches
+        .value_of("acme-http-address")
+        .map(|s| s.to_owned())
+        .expect("--acme-http-address impossibly missing"),
+    }),
     _ => unreachable!("CLI parser should have prevented both manual and automatic flags"),
   };
   let storage = matches
@@ -160,7 +184,11 @@ fn main() {
     tls,
   };
 
-  server::build(server_config)
-    .expect("failed to build server")
-    .launch();
+  if !server_config.tls.is_automatic() {
+    Server::new(server_config)
+      .expect("failed to build server")
+      .listen();
+  } else {
+    ServerWithAcme::new_and_listen(server_config).expect("failed to build server");
+  }
 }
