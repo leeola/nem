@@ -72,7 +72,8 @@ fn main() {
         .arg(
           Arg::with_name("lets-encrypt-staging")
             .long("lets-encrypt-staging")
-            .help("Use the staging server for LetsEncrypt, avoiding Rate Limit blocking."),
+            .help("Use the staging server for LetsEncrypt, good for development testing and avoiding Rate Limit blocking.")
+            .takes_value(false),
         )
         .group(
           ArgGroup::with_name("https")
@@ -94,6 +95,19 @@ fn main() {
   let matches = matches
     .subcommand_matches("serve")
     .expect("serve subcommand is required currently");
+
+  // If it's ever desired to run LetsEncrypt production on Debug build we'll likely
+  // add `--lets-encrypt-production` or something.
+  let use_staging = match (
+    cfg!(debug_assertions),
+    matches.occurrences_of("lets-encrypt-staging"),
+  ) {
+    (true, 0) => {
+      log::warn!("using LetsEncrypt Staging because nem-server is built with debug, and --lets-encrypt-staging is not specified");
+      true
+    }
+    _ => matches.is_present("lets-encrypt-staging"),
+  };
 
   let tls = match (
     matches.is_present("https-cert"),
@@ -119,7 +133,7 @@ fn main() {
         .value_of("acme-domain")
         .map(|s| s.to_owned())
         .expect("--acme-domain impossibly missing"),
-      use_staging: matches.is_present("--lets-encrypt-staging"),
+      use_staging,
     },
     _ => unreachable!("CLI parser should have prevented both manual and automatic flags"),
   };
