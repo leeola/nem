@@ -10,6 +10,9 @@ COPY rust-toolchain .
 # fe9baed is head at time of writing, no other reason.
 RUN cargo install --git "https://github.com/leeola/cargo-build-deps.git" --rev "fe9baed"
 
+RUN apt-get install -y libssl-dev
+RUN apt-get install -y pkg-config
+
 # build the deps, to ease the burden of Rust (hah).
 COPY Cargo.lock .
 COPY Cargo.toml .
@@ -20,8 +23,8 @@ COPY server/Cargo.toml server/Cargo.toml
 # `build -p foo` seems to have trouble with building packages from the workspace. Not sure why.
 RUN cd server && cargo build-deps \
   --ignore-pkg "mnemosyne" \
-  --ignore-pkg "mnemosyne_gui" \
-  --ignore-pkg "nem-server"
+  --ignore-pkg "mnemosyne-gui" \
+  --ignore-pkg "mnemosyne-server"
 
 COPY . /repo
 # temporarily using debug, non-release build
