@@ -1,6 +1,7 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
 pub mod acme;
+pub mod catchers;
 pub mod error;
 pub mod handlers;
 pub mod server;

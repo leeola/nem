@@ -1,13 +1,14 @@
 use {
   crate::{
-    acme::{Acme, AcmeConfig, PersistConfig},
+    acme::{Acme, AcmeConfig, Domain, PersistConfig},
+    catchers,
     error::InitError,
     handlers,
     states::template::Template,
   },
-  rocket::{routes, Rocket},
+  rocket::{catchers, routes, Rocket},
   rocket_contrib::serve::StaticFiles,
-  std::path::PathBuf,
+  std::{path::PathBuf, thread},
 };
 
 /// The base configuration for the Nem server.
@@ -103,16 +104,38 @@ impl ServerWithAcme {
       TlsConfig::None | TlsConfig::Manual { .. } => return Err(InitError::InvalidServerTlsVariant),
     };
 
-    // first, create Acme and fetch TLS from it. This will create everything needed,
-    // or fetch existing TLS if not needed.
     let acme = Acme::new(AcmeConfig {
       account: automatic_tls_config.account,
-      domain: automatic_tls_config.domain,
+      domain: automatic_tls_config.domain.clone(),
       use_staging: automatic_tls_config.use_staging,
       persist: PersistConfig::File {
         storage_path: config.storage.join("acme"),
       },
     });
+    // matching default rocket behavior, since nem_server doesn't expose this as configuration, yet.
+    #[cfg(debug_assertions)]
+    let rocket_env = rocket::config::Environment::Development;
+    #[cfg(not(debug_assertions))]
+    let rocket_env = rocket::config::Environment::Production;
+
+    // start a rocket server to listen to TLS auth.
+    let http_confirmation_rocket_config = rocket::config::Config::build(rocket_env)
+      .address(&automatic_tls_config.address)
+      .port(automatic_tls_config.port)
+      .workers(1)
+      .finalize()?;
+    {
+      let acme = acme.clone();
+      let domain = automatic_tls_config.domain.clone();
+      thread::spawn(move || {
+        rocket::custom(http_confirmation_rocket_config)
+          .manage(Domain(domain))
+          .manage(acme.clone())
+          .mount("/", routes![handlers::acme_challenge::acme_challenge])
+          .register(catchers![catchers::acme_not_found::acme_not_found])
+          .launch();
+      });
+    }
 
     let tls_paths = acme.tls_to_dir(config.storage.join("rocket_tls"))?;
     let certs = tls_paths
@@ -130,8 +153,8 @@ impl ServerWithAcme {
     // TODO: monitor TLS for invalidation.
     // acme.monitor();
 
-    let rocket = main_rocket_from_config(rocket_config)?;
-    rocket.launch();
+    main_rocket_from_config(rocket_config)?.launch();
+
     unreachable!()
   }
 }
@@ -158,8 +181,6 @@ fn main_rocket_from_config(
     .mount("/", routes![handlers::index]);
   Ok(rocket_server)
 }
-
-// fn acme_setup(rocket_config: rocket::config::ConfigBuilder) ->
 
 impl From<rocket::config::ConfigError> for InitError {
   fn from(err: rocket::config::ConfigError) -> Self {
