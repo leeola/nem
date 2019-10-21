@@ -1,19 +1,23 @@
-pub mod http_validate;
-
 use {
   acme_lib::{
     self,
     persist::{FilePersist, Persist},
     {Account, Certificate, Directory, DirectoryUrl},
   },
-  http_validate::HttpValidate,
   std::{
+    collections::HashMap,
     fs::{self, File},
     io::{Read, Write},
     path::PathBuf,
+    sync::{Arc, Mutex},
   },
 };
 
+pub type MaybeChallenges = Arc<Mutex<Option<HashMap<String, String>>>>;
+
+pub struct Domain(pub String);
+
+#[derive(Clone)]
 pub struct AcmeConfig {
   pub account: String,
   pub domain: String,
@@ -21,20 +25,25 @@ pub struct AcmeConfig {
   pub persist: PersistConfig,
 }
 
+#[derive(Clone)]
 pub enum PersistConfig {
   File { storage_path: PathBuf },
 }
 
+#[derive(Clone)]
 pub struct Acme {
   config: AcmeConfig,
-  challenges: HttpValidate,
+  maybe_challenges: MaybeChallenges,
 }
 
 impl Acme {
   pub fn new(config: AcmeConfig) -> Self {
     // TODO: move this http logic out of here.
-    let challenges = HttpValidate::new("127.0.0.1".to_owned(), 9002, config.domain.clone());
-    Self { config, challenges }
+    let maybe_challenges = Arc::new(Mutex::new(None));
+    Self {
+      config,
+      maybe_challenges,
+    }
   }
 
   /// Import private key into persistence.
@@ -43,9 +52,6 @@ impl Acme {
   }
 
   pub fn tls(&self) -> Result<Tls> {
-    // TODO: move this http logic out of here.
-    self.challenges.start().unwrap();
-
     let persist = match self.config.persist {
       PersistConfig::File { ref storage_path } => {
         let storage_path = storage_path.join("persistence");
@@ -114,20 +120,22 @@ impl Acme {
 
     let ord_csr = loop {
       if let Some(ord_csr) = ord_new.confirm_validations() {
+        log::debug!("order already validated");
         break ord_csr;
       }
-
       let auths = ord_new.authorizations()?;
+      log::debug!("authorizations.len() = {}", auths.len());
       for auth in auths.into_iter() {
         let chall = auth.http_challenge();
 
         let token = chall.http_token();
         let proof = chall.http_proof();
-        self.challenges.insert_challenge(token.to_owned(), proof)?;
+        self.insert_challenge(token.to_owned(), proof)?;
 
         // TODO: validate ourselves that we can hit the HTTP proof, as a simple measure to
         // avoid hitting the ACME API when not viable.
 
+        log::debug!("requesting validation from ACME");
         chall.validate(5000)?;
       }
 
@@ -149,6 +157,8 @@ impl Acme {
     // the persistence.
     let cert = ord_cert.download_and_save_cert()?;
 
+    self.clear_challenges()?;
+
     Ok(cert)
   }
 
@@ -158,6 +168,34 @@ impl Acme {
   // to verify ownership.
   pub fn monitor(self) {
     unimplemented!()
+  }
+
+  fn insert_challenge(&self, token: String, proof: String) -> Result<()> {
+    let mut challs = self
+      .maybe_challenges
+      .lock()
+      .map_err(|_| Error::ChallengeLockPoisoned)?;
+
+    let challs = match challs.as_mut() {
+      Some(challs) => challs,
+      None => {
+        *challs = Some(HashMap::new());
+        challs.as_mut().expect("value impossibly missing")
+      }
+    };
+
+    challs.insert(token, proof);
+
+    Ok(())
+  }
+  fn clear_challenges(&self) -> Result<()> {
+    let mut challs = self
+      .maybe_challenges
+      .lock()
+      .map_err(|_| Error::ChallengeLockPoisoned)?;
+
+    *challs = None;
+    Ok(())
   }
 }
 
