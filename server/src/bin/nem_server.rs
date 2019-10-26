@@ -27,7 +27,7 @@ fn main() {
             .long("address")
             .value_name("ADDR")
             .default_value("127.0.0.1")
-            .help("A local address to run the Nem server on; typically 127.0.0.1 or 0.0.0.0")
+            .help("A local address to run the Nem server on. Typically 127.0.0.1 or 0.0.0.0")
             .takes_value(true)
             .required(true),
         )
@@ -73,24 +73,32 @@ fn main() {
           Arg::with_name("acme-http-port")
             .long("acme-http-port")
             .value_name("PORT")
-            .help("The port that ACME HTTP challenges will run on, typically 80")
-            .default_value("80")
+            .help(
+              "The port that ACME HTTP challenges will run on.\
+               Typically 80 [default: 9002]",
+            )
+            // Disabling default inside group, see: https://github.com/clap-rs/clap/issues/1586
+            //.default_value("9002")
             .takes_value(true),
         )
         .arg(
           Arg::with_name("acme-http-address")
             .long("acme-http-address")
             .value_name("PORT")
-            .help("The address that ACME HTTP challenges will run on, typically 0.0.0.0")
-            .default_value("0.0.0.0")
+            .help(
+              "The address that ACME HTTP challenges will run on.\
+               Typically 127.0.0.1 or 0.0.0.0 [default: 127.0.0.1]",
+            )
+            // Disabling default inside group, see: https://github.com/clap-rs/clap/issues/1586
+            //.default_value("0.0.0.0")
             .takes_value(true),
         )
         .arg(
           Arg::with_name("lets-encrypt-staging")
             .long("lets-encrypt-staging")
             .help(
-              "Use the staging server for LetsEncrypt, good for development testing and
-              avoiding Rate Limit blocking.",
+              "Use the staging server for LetsEncrypt, good for development testing and\
+               avoiding Rate Limit blocking.",
             )
             .takes_value(false),
         )
@@ -166,12 +174,19 @@ fn main() {
       use_staging,
       port: matches
         .value_of("acme-http-port")
-        .map(|s| s.parse::<u16>().expect("invalid --acme-http-port"))
-        .expect("--acme-http-port impossibly missing"),
+        // Manually specifying the default, due to:
+        // https://github.com/clap-rs/clap/issues/1586
+        .map_or_else(
+          || 9002,
+          |s| s.parse::<u16>().expect("invalid --acme-http-port"),
+        ),
+      //.expect("--acme-http-port impossibly missing"),
       address: matches
         .value_of("acme-http-address")
-        .map(|s| s.to_owned())
-        .expect("--acme-http-address impossibly missing"),
+        // Manually specifying the default, due to:
+        // https://github.com/clap-rs/clap/issues/1586
+        .map_or_else(|| "".to_owned(), |s| s.to_owned()),
+      //.expect("--acme-http-address impossibly missing"),
     }),
     _ => unreachable!("CLI parser should have prevented both manual and automatic flags"),
   };
