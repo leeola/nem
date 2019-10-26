@@ -145,7 +145,9 @@ impl Acme {
 
     // Ownership is proven. Create a private/public key pair for
     // the certificate.
-    let (pkey_pri, pkey_pub) = acme_lib::create_p384_key();
+    //
+    // RSA 4096 chosen for Rocket compat. P256/P384 were proving difficult.
+    let (pkey_pri, pkey_pub) = acme_lib::create_rsa_key(4096);
 
     // Submit the CSR. This causes the ACME provider to enter a
     // state of "processing" that must be polled until the
