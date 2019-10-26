@@ -174,10 +174,17 @@ fn new_rocket_config_builder(config: &Config) -> rocket::config::ConfigBuilder {
 fn main_rocket_from_config(
   rocket_config: rocket::config::ConfigBuilder,
 ) -> Result<Rocket, InitError> {
+  // let tmpls = Template::new("./templates").expect("templates failed to initialize")
+  let mut tmpls = handlebars::Handlebars::new();
+  &[("index", include_str!("../templates/index.hbs"))]
+    .into_iter()
+    .try_for_each(|(name, tmpl)| tmpls.register_template_string(name, tmpl))
+    .unwrap();
+
   let rocket_config = rocket_config.finalize()?;
   let rocket_server = rocket::custom(rocket_config)
     .mount("/public", StaticFiles::from("./public"))
-    .manage(Template::new("./templates").expect("templates failed to initialize"))
+    .manage(tmpls)
     .mount("/", routes![handlers::index]);
   Ok(rocket_server)
 }

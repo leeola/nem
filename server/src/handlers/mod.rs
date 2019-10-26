@@ -6,7 +6,7 @@ use {
 };
 
 #[get("/")]
-pub fn index(tmpl: State<Template>) -> Result<Html<String>> {
-  let tmpl_s = tmpl.render("index", ())?;
+pub fn index(tmpl: State<handlebars::Handlebars>) -> Result<Html<String>> {
+  let tmpl_s = tmpl.render("index", &()).unwrap();
   Ok(Html(tmpl_s))
 }
