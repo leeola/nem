@@ -170,6 +170,10 @@ impl Acme {
     unimplemented!()
   }
 
+  pub fn maybe_challenges(&self) -> MaybeChallenges {
+    self.maybe_challenges.clone()
+  }
+
   fn insert_challenge(&self, token: String, proof: String) -> Result<()> {
     let mut challs = self
       .maybe_challenges
