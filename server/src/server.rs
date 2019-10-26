@@ -130,7 +130,7 @@ impl ServerWithAcme {
       thread::spawn(move || {
         rocket::custom(http_confirmation_rocket_config)
           .manage(Domain(domain))
-          .manage(acme.clone())
+          .manage(acme.maybe_challenges())
           .mount("/", routes![handlers::acme_challenge::acme_challenge])
           .register(catchers![catchers::acme_not_found::acme_not_found])
           .launch();
