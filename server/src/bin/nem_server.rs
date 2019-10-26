@@ -88,7 +88,10 @@ fn main() {
         .arg(
           Arg::with_name("lets-encrypt-staging")
             .long("lets-encrypt-staging")
-            .help("Use the staging server for LetsEncrypt, good for development testing and avoiding Rate Limit blocking.")
+            .help(
+              "Use the staging server for LetsEncrypt, good for development testing and
+              avoiding Rate Limit blocking.",
+            )
             .takes_value(false),
         )
         .group(
@@ -101,8 +104,19 @@ fn main() {
         .group(
           ArgGroup::with_name("acme")
             .multiple(true)
-            .args(&["acme-account", "acme-domain", "lets-encrypt-staging", "acme-http-port", "acme-http-address"])
-            .requires_all(&["acme-account", "acme-domain", "acme-http-address", "acme-http-port"])
+            .args(&[
+              "acme-account",
+              "acme-domain",
+              "lets-encrypt-staging",
+              "acme-http-port",
+              "acme-http-address",
+            ])
+            .requires_all(&[
+              "acme-account",
+              "acme-domain",
+              "acme-http-address",
+              "acme-http-port",
+            ])
             .conflicts_with_all(&["port", "https"]),
         ),
     )
