@@ -22,11 +22,12 @@ COPY mnemosyne/Cargo.toml mnemosyne/Cargo.toml
 COPY server/Cargo.toml server/Cargo.toml
 # `build -p foo` seems to have trouble with building packages from the workspace. Not sure why.
 RUN cd server && cargo build-deps \
+  --release \
   --ignore-pkg "mnemosyne" \
   --ignore-pkg "mnemosyne-gui" \
   --ignore-pkg "mnemosyne-server"
 
 COPY . /repo
 # temporarily using debug, non-release build
-RUN cargo build --bin "nem-server" \
-  && mv target/debug/nem-server /build
+RUN cargo build --release --bin "nem-server" \
+  && mv target/release/nem-server /build
