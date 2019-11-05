@@ -1,2 +1,7 @@
 target
+/cli/target
+/gui/target
+/pwa/target
+/mnemosyne/target
+/server/target
 *Dockerfile
