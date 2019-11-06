@@ -2,7 +2,7 @@ pub mod acme_challenge;
 
 use {
   crate::error::Result,
-  moxie,
+  mnemosyne_gui::*,
   moxie_dom::*,
   rocket::{get, response::content::Html, State},
 };
@@ -13,20 +13,8 @@ pub fn index(tmpl: State<handlebars::Handlebars>) -> Result<Html<String>> {
   Ok(Html(tmpl_s))
 }
 
-#[topo::nested]
-fn mox_test() {
-  let items = vec!["foo", "bar"];
-  moxie::mox! {
-    <ul>{
-      for item in items {
-        moxie::mox!(<li>{% "{}", item }</li>)
-      }
-    }</ul>
-  }
-}
-
 #[get("/mox_test")]
 pub fn handle_mox_test() -> Html<String> {
-  let res = moxie_dom::render_html(move || mox_test!());
+  let res = moxie_dom::render_html(move || mnemosyne_gui::mox_test!());
   Html(res)
 }

@@ -679,6 +679,10 @@ dependencies = [
 [[package]]
 name = "mnemosyne-gui"
 version = "0.0.1"
+dependencies = [
+ "moxie 0.1.1-alpha.1-pre (git+https://github.com/anp/moxie)",
+ "moxie-dom 0.1.1-alpha.1-pre (git+https://github.com/anp/moxie)",
+]
 
 [[package]]
 name = "mnemosyne-server"
