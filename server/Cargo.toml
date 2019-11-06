@@ -28,3 +28,13 @@ acme-lib = { version = "0.5.2", optional = true }
 log = "0.4.8"
 env_logger = "0.7.1"
 clap = "2.33.0"
+
+[dependencies.moxie]
+git = "https://github.com/anp/moxie"
+version = "0.1.1-alpha.1-pre"
+
+[dependencies.moxie-dom]
+git = "https://github.com/anp/moxie"
+version = "0.1.1-alpha.1-pre"
+default-features = false
+features = ["rsdom"]

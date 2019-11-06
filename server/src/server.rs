@@ -185,7 +185,7 @@ fn main_rocket_from_config(
   let rocket_server = rocket::custom(rocket_config)
     .mount("/public", StaticFiles::from("./public"))
     .manage(tmpls)
-    .mount("/", routes![handlers::index]);
+    .mount("/", routes![handlers::index, handlers::handle_mox_test]);
   Ok(rocket_server)
 }
 
