@@ -3,7 +3,7 @@ use {
     acme::{Acme, AcmeConfig, Domain, PersistConfig},
     catchers,
     error::InitError,
-    handlers,
+    handlers, routes,
     states::template::Template,
   },
   rocket::{catchers, routes, Rocket},
@@ -184,11 +184,13 @@ fn main_rocket_from_config(
   let rocket_config = rocket_config.finalize()?;
   let rocket_server = rocket::custom(rocket_config)
     .mount("/public", StaticFiles::from("./public"))
-    .manage(tmpls)
-    .mount("/", routes![handlers::index, handlers::handle_mox_test]);
+    .manage(tmpls);
 
-  #[cfg(feature = "pwa-assets")]
-  let rocket_server = rocket_server.mount("/", routes![handlers::assets::pwa_index]);
+  let rocket_server = routes::new()
+    .into_iter()
+    .fold(rocket_server, |rocket_server, (base, routes)| {
+      rocket_server.mount(base, routes)
+    });
 
   Ok(rocket_server)
 }
