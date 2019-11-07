@@ -21,6 +21,7 @@ name = "mnemosyne_pwa"
 path = "src/lib.rs"
 
 [dependencies]
+mnemosyne-gui = { path = "../gui" }
 moxie = { git = "https://github.com/anp/moxie" }
 moxie-dom = { git = "https://github.com/anp/moxie" }
 wasm-bindgen = "0.2"

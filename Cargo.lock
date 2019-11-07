@@ -990,6 +990,7 @@ dependencies = [
 name = "mnemosyne-pwa"
 version = "0.0.1-pre"
 dependencies = [
+ "mnemosyne-gui 0.0.1",
  "moxie 0.1.1-alpha.1-pre (git+https://github.com/anp/moxie)",
  "moxie-dom 0.1.1-alpha.1-pre (git+https://github.com/anp/moxie)",
  "wasm-bindgen 0.2.53 (registry+https://github.com/rust-lang/crates.io-index)",
