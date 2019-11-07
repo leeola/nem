@@ -2,7 +2,7 @@ use rocket::{get, http::ContentType, Response};
 use std::io::Cursor;
 
 #[get("/assets/pwa/index.html")]
-pub fn pwa_index() -> Response<'static> {
+pub fn pwa_html() -> Response<'static> {
   let mut response = Response::new();
   response.set_header(ContentType::HTML);
   response.set_sized_body(Cursor::new(include_str!(concat!(
@@ -13,7 +13,7 @@ pub fn pwa_index() -> Response<'static> {
 }
 
 #[get("/assets/pwa/index.js")]
-pub fn pwa_app() -> Response<'static> {
+pub fn pwa_js() -> Response<'static> {
   let mut response = Response::new();
   response.set_header(ContentType::JavaScript);
   response.set_sized_body(Cursor::new(include_str!(concat!(
@@ -23,7 +23,7 @@ pub fn pwa_app() -> Response<'static> {
   response
 }
 
-#[get("/assets/pwa/app_bg.wasm")]
+#[get("/assets/pwa/index_bg.wasm")]
 pub fn pwa_wasm() -> Response<'static> {
   let mut response = Response::new();
   response.set_header(ContentType::WASM);
