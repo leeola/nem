@@ -11,7 +11,18 @@ fn main() {
     let server_crate_dir = env::current_dir().unwrap();
     let pwa_crate_dir = server_crate_dir.join("..").join("pwa");
 
+    fs::create_dir_all(&pwa_dst_path).unwrap();
+
     println!("cargo:rustc-env=PWA_DIR={}", pwa_dst_path.to_str().unwrap());
+    // rerun the build if any pwa files change.
+    ["index.html", "manifest.json", "sw.js", "src"]
+      .iter()
+      .for_each(|path| {
+        println!(
+          "cargo:rerun-if-changed={}",
+          pwa_crate_dir.join(path).to_str().unwrap()
+        );
+      });
 
     ["index.html", "manifest.json", "sw.js"]
       .iter()
