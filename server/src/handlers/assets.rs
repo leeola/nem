@@ -1,19 +1,25 @@
-use rocket::{get, http::ContentType, response::content::Html, Response};
+use rocket::{get, http::ContentType, Response};
 use std::io::Cursor;
 
 #[get("/assets/pwa/index.html")]
 pub fn pwa_index() -> Response<'static> {
   let mut response = Response::new();
   response.set_header(ContentType::HTML);
-  response.set_sized_body(Cursor::new(include_str!("../../../pwa/index.html")));
+  response.set_sized_body(Cursor::new(include_str!(concat!(
+    env!("PWA_DIR"),
+    "/index.html"
+  ))));
   response
 }
 
-#[get("/assets/pwa/app.js")]
+#[get("/assets/pwa/index.js")]
 pub fn pwa_app() -> Response<'static> {
   let mut response = Response::new();
   response.set_header(ContentType::JavaScript);
-  response.set_sized_body(Cursor::new(include_str!("../../../pwa/pkg/app.js")));
+  response.set_sized_body(Cursor::new(include_str!(concat!(
+    env!("PWA_DIR"),
+    "/index.js"
+  ))));
   response
 }
 
@@ -21,7 +27,7 @@ pub fn pwa_app() -> Response<'static> {
 pub fn pwa_wasm() -> Response<'static> {
   let mut response = Response::new();
   response.set_header(ContentType::WASM);
-  let b: &'static [u8] = include_bytes!("../../../pwa/pkg/index_bg.wasm");
+  let b: &'static [u8] = include_bytes!(concat!(env!("PWA_DIR"), "/index_bg.wasm"));
   response.set_sized_body(Cursor::new(b));
   response
 }
@@ -30,7 +36,10 @@ pub fn pwa_wasm() -> Response<'static> {
 pub fn pwa_manifest() -> Response<'static> {
   let mut response = Response::new();
   response.set_header(ContentType::JSON);
-  response.set_sized_body(Cursor::new(include_str!("../../../pwa/manifest.json")));
+  response.set_sized_body(Cursor::new(include_str!(concat!(
+    env!("PWA_DIR"),
+    "/manifest.json"
+  ))));
   response
 }
 
@@ -38,6 +47,9 @@ pub fn pwa_manifest() -> Response<'static> {
 pub fn pwa_sw() -> Response<'static> {
   let mut response = Response::new();
   response.set_header(ContentType::JavaScript);
-  response.set_sized_body(Cursor::new(include_str!("../../../pwa/sw.js")));
+  response.set_sized_body(Cursor::new(include_str!(concat!(
+    env!("PWA_DIR"),
+    "/sw.js"
+  ))));
   response
 }

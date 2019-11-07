@@ -186,6 +186,10 @@ fn main_rocket_from_config(
     .mount("/public", StaticFiles::from("./public"))
     .manage(tmpls)
     .mount("/", routes![handlers::index, handlers::handle_mox_test]);
+
+  #[cfg(feature = "pwa-assets")]
+  let rocket_server = rocket_server.mount("/", routes![handlers::assets::pwa_index]);
+
   Ok(rocket_server)
 }
 

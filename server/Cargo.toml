@@ -13,7 +13,8 @@ name = "nem-server"
 path = "src/bin/nem_server.rs"
 
 [features]
-default = ["mnemosyne/db", "mnemosyne/sqlite", "hosted"]
+default = ["mnemosyne/db", "mnemosyne/sqlite", "hosted", "pwa-assets"]
+pwa-assets = []
 hosted = ["acme-lib"]
 templates-reload = []
 
@@ -38,3 +39,7 @@ git = "https://github.com/anp/moxie"
 version = "0.1.1-alpha.1-pre"
 default-features = false
 features = ["rsdom"]
+
+[build-dependencies]
+# WISHLIST: only depend on this if the PWA feature is in use.
+wasm-pack = "0.8.1"

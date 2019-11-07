@@ -1,4 +1,6 @@
 pub mod acme_challenge;
+#[cfg(feature = "pwa-assets")]
+pub mod assets;
 
 use {
   crate::error::Result,
