@@ -15,9 +15,14 @@ self.addEventListener('install', function(event) {
 
 self.addEventListener('fetch', function(event) {
   event.respondWith(
-    caches.match(event.request).then(function(req) {
-      console.log('nem pwa sw: fetching resource: ' + event.request.url);
-      return req || fetch(event.request).then(function(response) {
+    caches.match(event.request, {cacheName}).then(function(req) {
+      if (req) {
+        console.log(`nem pwa sw: using cache ${cacheName} for resource: ${event.request.url}`);
+        return req;
+      }
+
+      console.log(`nem pwa sw: cache ${cacheName} missing resource, fetching: ${event.request.url}`);
+      return fetch(event.request).then(function(response) {
         return caches.open(cacheName).then(function(cache) {
           console.log('nem pwa sw: caching new resource: ' + event.request.url);
           cache.put(event.request, response.clone());
