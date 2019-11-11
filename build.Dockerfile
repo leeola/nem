@@ -20,11 +20,13 @@ COPY cli/Cargo.toml cli/Cargo.toml
 COPY gui/Cargo.toml gui/Cargo.toml
 COPY mnemosyne/Cargo.toml mnemosyne/Cargo.toml
 COPY server/Cargo.toml server/Cargo.toml
+COPY pwa/Cargo.toml pwa/Cargo.toml
 # `build -p foo` seems to have trouble with building packages from the workspace. Not sure why.
 RUN cd server && cargo build-deps \
   --release \
   --ignore-pkg "mnemosyne" \
   --ignore-pkg "mnemosyne-gui" \
+  --ignore-pkg "mnemosyne-pwa" \
   --ignore-pkg "mnemosyne-server"
 
 COPY . /repo

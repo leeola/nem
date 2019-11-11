@@ -4,4 +4,6 @@ members = [
 	"mnemosyne",
 	"server",
 	"gui",
+	"pwa",
+	"pwa_build",
 ]

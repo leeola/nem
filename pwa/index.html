@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Nem PWA</title>
+  <meta charset="utf-8" />
+  <link rel="manifest" href="/assets/pwa/manifest.json">
+</head>
+<body>
+  <script type="module">
+    import init from './index.js';
+    init();
+    // no need to await..?
+    // async function run() {
+    //   await init();
+    // }
+    // run();
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    };
+  </script>
+</body>
+</html>

@@ -4,6 +4,7 @@ pub mod acme;
 pub mod catchers;
 pub mod error;
 pub mod handlers;
+mod routes;
 pub mod server;
 pub mod states;
 

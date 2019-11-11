@@ -1,0 +1,30 @@
+[package]
+name = "mnemosyne-pwa"
+version = "0.0.1-pre"
+edition = "2018"
+
+# TODO(https://github.com/rustwasm/wasm-pack/issues/696)
+[package.metadata.wasm-pack.profile.dev]
+wasm-opt = false
+
+[package.metadata.wasm-pack.profile.profiling]
+wasm-opt = false
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
+[lib]
+crate-type = [ "cdylib" ]
+# A library is not really needed or used currently, however the build.Dockerfile, specifically the
+# build-deps within it, was failing due to the lib file not being specified.
+name = "mnemosyne_pwa"
+path = "src/lib.rs"
+
+[dependencies]
+mnemosyne-gui = { path = "../gui" }
+moxie = { git = "https://github.com/anp/moxie" }
+moxie-dom = { git = "https://github.com/anp/moxie" }
+wasm-bindgen = "0.2"
+
+[build-dependencies]
+wasm-pack = "0.8.1"

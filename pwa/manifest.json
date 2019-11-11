@@ -1,0 +1,9 @@
+{
+  "name": "Nem",
+  "short_name": "Nem",
+  "start_url": "/pwa/index.html",
+  "display": "standalone",
+  "background_color": "black",
+  "description": "Description"
+}
+
