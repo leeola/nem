@@ -2,6 +2,7 @@
 
 pub mod acme;
 pub mod catchers;
+pub mod config;
 pub mod error;
 pub mod handlers;
 mod routes;
