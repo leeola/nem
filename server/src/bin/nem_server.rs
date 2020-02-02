@@ -1,15 +1,15 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
 use {
-  clap::{App, Arg, ArgGroup, SubCommand},
-  mnemosyne_server::server::{Config, Server, ServerWithAcme, TlsAutomaticConfig, TlsConfig},
-  std::path::PathBuf,
+    clap::{App, Arg, ArgGroup, SubCommand},
+    mnemosyne_server::server::{Config, Server, ServerWithAcme, TlsAutomaticConfig, TlsConfig},
+    std::path::PathBuf,
 };
 
 fn main() {
-  env_logger::init_from_env(env_logger::Env::new().filter_or("NEM_LOG", "info"));
+    env_logger::init_from_env(env_logger::Env::new().filter_or("NEM_LOG", "info"));
 
-  let matches = App::new("nem-server")
+    let matches = App::new("nem-server")
     .about("Does awesome things")
     .subcommand(
       SubCommand::with_name("serve")
@@ -130,94 +130,94 @@ fn main() {
     )
     .get_matches();
 
-  let matches = matches
-    .subcommand_matches("serve")
-    .expect("serve subcommand is required currently");
+    let matches = matches
+        .subcommand_matches("serve")
+        .expect("serve subcommand is required currently");
 
-  // If it's ever desired to run LetsEncrypt production on Debug build we'll likely
-  // add `--lets-encrypt-production` or something.
-  let use_staging = match (
-    cfg!(debug_assertions),
-    matches.occurrences_of("lets-encrypt-staging"),
-  ) {
-    (true, 0) => {
-      log::warn!("using LetsEncrypt Staging because nem-server is built with debug, and --lets-encrypt-staging is not specified");
-      true
+    // If it's ever desired to run LetsEncrypt production on Debug build we'll likely
+    // add `--lets-encrypt-production` or something.
+    let use_staging = match (
+        cfg!(debug_assertions),
+        matches.occurrences_of("lets-encrypt-staging"),
+    ) {
+        (true, 0) => {
+            log::warn!("using LetsEncrypt Staging because nem-server is built with debug, and --lets-encrypt-staging is not specified");
+            true
+        }
+        _ => matches.is_present("lets-encrypt-staging"),
+    };
+
+    let tls = match (
+        matches.is_present("https-cert"),
+        matches.is_present("acme-account"),
+    ) {
+        (false, false) => TlsConfig::None,
+        (true, false) => TlsConfig::Manual {
+            certs: matches
+                .value_of("https-cert")
+                .map(|s| s.to_owned())
+                .expect("--https-cert impossibly missing"),
+            key: matches
+                .value_of("https-key")
+                .map(|s| s.to_owned())
+                .expect("--https-key impossibly missing"),
+        },
+        (false, true) => TlsConfig::Automatic(TlsAutomaticConfig {
+            account: matches
+                .value_of("acme-account")
+                .map(|s| s.to_owned())
+                .expect("--acme-account impossibly missing"),
+            domain: matches
+                .value_of("acme-domain")
+                .map(|s| s.to_owned())
+                .expect("--acme-domain impossibly missing"),
+            use_staging,
+            port: matches
+                .value_of("acme-http-port")
+                // Manually specifying the default, due to:
+                // https://github.com/clap-rs/clap/issues/1586
+                .map_or_else(
+                    || 9002,
+                    |s| s.parse::<u16>().expect("invalid --acme-http-port"),
+                ),
+            //.expect("--acme-http-port impossibly missing"),
+            address: matches
+                .value_of("acme-http-address")
+                // Manually specifying the default, due to:
+                // https://github.com/clap-rs/clap/issues/1586
+                .map_or_else(|| "".to_owned(), |s| s.to_owned()),
+            //.expect("--acme-http-address impossibly missing"),
+        }),
+        _ => unreachable!("CLI parser should have prevented both manual and automatic flags"),
+    };
+    let storage = matches
+        .value_of("storage")
+        .map(|s| PathBuf::from(s))
+        .expect("missing --storage");
+    let address = matches
+        .value_of("address")
+        .map(|s| s.to_owned())
+        .expect("missing --address");
+    let port = match tls.is_using_tls() {
+        true => 443,
+        false => matches
+            .value_of("port")
+            .map(|s| s.parse::<u16>().expect("invalid --port"))
+            .expect("missing --port"),
+    };
+
+    let server_config = Config {
+        storage,
+        port,
+        address,
+        tls,
+    };
+
+    if !server_config.tls.is_automatic() {
+        Server::new(server_config)
+            .expect("failed to build server")
+            .listen();
+    } else {
+        ServerWithAcme::new_and_listen(server_config).expect("failed to build server");
     }
-    _ => matches.is_present("lets-encrypt-staging"),
-  };
-
-  let tls = match (
-    matches.is_present("https-cert"),
-    matches.is_present("acme-account"),
-  ) {
-    (false, false) => TlsConfig::None,
-    (true, false) => TlsConfig::Manual {
-      certs: matches
-        .value_of("https-cert")
-        .map(|s| s.to_owned())
-        .expect("--https-cert impossibly missing"),
-      key: matches
-        .value_of("https-key")
-        .map(|s| s.to_owned())
-        .expect("--https-key impossibly missing"),
-    },
-    (false, true) => TlsConfig::Automatic(TlsAutomaticConfig {
-      account: matches
-        .value_of("acme-account")
-        .map(|s| s.to_owned())
-        .expect("--acme-account impossibly missing"),
-      domain: matches
-        .value_of("acme-domain")
-        .map(|s| s.to_owned())
-        .expect("--acme-domain impossibly missing"),
-      use_staging,
-      port: matches
-        .value_of("acme-http-port")
-        // Manually specifying the default, due to:
-        // https://github.com/clap-rs/clap/issues/1586
-        .map_or_else(
-          || 9002,
-          |s| s.parse::<u16>().expect("invalid --acme-http-port"),
-        ),
-      //.expect("--acme-http-port impossibly missing"),
-      address: matches
-        .value_of("acme-http-address")
-        // Manually specifying the default, due to:
-        // https://github.com/clap-rs/clap/issues/1586
-        .map_or_else(|| "".to_owned(), |s| s.to_owned()),
-      //.expect("--acme-http-address impossibly missing"),
-    }),
-    _ => unreachable!("CLI parser should have prevented both manual and automatic flags"),
-  };
-  let storage = matches
-    .value_of("storage")
-    .map(|s| PathBuf::from(s))
-    .expect("missing --storage");
-  let address = matches
-    .value_of("address")
-    .map(|s| s.to_owned())
-    .expect("missing --address");
-  let port = match tls.is_using_tls() {
-    true => 443,
-    false => matches
-      .value_of("port")
-      .map(|s| s.parse::<u16>().expect("invalid --port"))
-      .expect("missing --port"),
-  };
-
-  let server_config = Config {
-    storage,
-    port,
-    address,
-    tls,
-  };
-
-  if !server_config.tls.is_automatic() {
-    Server::new(server_config)
-      .expect("failed to build server")
-      .listen();
-  } else {
-    ServerWithAcme::new_and_listen(server_config).expect("failed to build server");
-  }
 }
