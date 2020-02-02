@@ -1,10 +1,10 @@
 [workspace]
 members = [
-    "cli",
-    "electron_gui",
-    "gui",
-    "mnemosyne",
-    "pwa",
-    "pwa_build",
-    "server",
+  "cli",
+  "electron_gui",
+  "gui",
+  "mnemosyne",
+  "pwa",
+  "pwa_build",
+  "server",
 ]
