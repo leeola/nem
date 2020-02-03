@@ -1,4 +1,5 @@
 {
+  "main": "node/main.js",
   "scripts": {
     "start": "electron ."
   },
