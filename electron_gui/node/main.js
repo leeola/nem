@@ -17,7 +17,9 @@ let createProtocol = (scheme, normalize = true) => {
   protocol.registerBufferProtocol(scheme, (req, callback) => {
     let pathName = new URL(req.url).pathname;
     pathName = decodeURI(pathName);
-    readFile(__dirname + "/" + pathName, (error, data) => {
+    // Setting the path relative to the root of electron_gui
+    let filePath = path.join(__dirname, "..", pathName);
+    readFile(filePath, (error, data) => {
       let extension = extname(pathName).toLowerCase();
       let mimeType = "";
       if (extension === ".js") {
