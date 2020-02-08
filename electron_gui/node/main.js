@@ -11,7 +11,7 @@ let {URL} = require("url");
 let path = require("path");
 
 let tray = undefined
-let tratWindow = undefined
+let hoverWindow = undefined
 
 let createProtocol = (scheme, normalize = true) => {
   protocol.registerBufferProtocol(scheme, (req, callback) => {
@@ -50,82 +50,58 @@ protocol.registerSchemesAsPrivileged([{
 app.on("ready", () => {
   createProtocol("app");
 
-  // let browserWindow = new BrowserWindow({
-  //   webPreferences: {
-  //     nodeIntegration: false,
-  //     contextIsolation: true
-  //   }
-  // });
-  // // browserWindow.webContents.openDevTools();
-  // browserWindow.loadFile("index.html");
+  hoverWindow = new BrowserWindow({
+    width: 700,
+    height: 400,
+    // show: false,
+    frame: false,
+    fullscreenable: false,
+    resizable: false,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true
+    }
+  });
+
+  // TODO: auto launch this at startup in dev?
+  hoverWindow.openDevTools({mode: 'detach'})
+
+  let hover_html = path.join(__dirname, "..", "browser", "hover.html");
+  hoverWindow.loadURL(`file://${hover_html}`)
+
+  // Hide the window when it loses focus
+  hoverWindow.on("blur", () => {
+    if (!hoverWindow.webContents.isDevToolsOpened()) {
+      hoverWindow.hide()
+    }
+  })
 
   createTray();
-  createTrayWindow();
 });
 
 const createTray = () => {
   tray = new Tray(`${__dirname}/../assets/tmp_icon.png`)
-  tray.on('right-click', toggleTrayWindow)
-  tray.on('double-click', toggleTrayWindow)
+  tray.on('right-click', showHoverWindow)
+  tray.on('double-click', showHoverWindow)
   tray.on('click', function (event) {
-    toggleTrayWindow()
+    showHoverWindow()
 
     // Show devtools when command clicked
-    if (trayWindow.isVisible() && process.defaultApp && event.metaKey) {
-      //trayWindow.openDevTools({mode: 'detach'})
+    if (hoverWindow.isVisible() && process.defaultApp && event.metaKey) {
+      hoverWindow.openDevTools({mode: 'detach'})
     }
   })
 }
 
-const createTrayWindow = () => {
-  trayWindow = new BrowserWindow({
-    width: 300,
-    height: 450,
-    show: false,
-    frame: false,
-    fullscreenable: false,
-    resizable: false,
-    //transparent: true,
-    webPreferences: {
-      // Prevents renderer process code from not running when window is
-      // hidden
-      backgroundThrottling: false
-    }
-  })
-  let index_path = path.join(__dirname, "..", "browser", "tray_index.html");
-  trayWindow.loadURL(`file://${index_path}`)
-  // Hide the window when it loses focus
-  trayWindow.on("blur", () => {
-    if (!trayWindow.webContents.isDevToolsOpened()) {
-      trayWindow.hide()
-    }
-  })
-}
-
-const toggleTrayWindow = () => {
-  if (trayWindow.isVisible()) {
-    trayWindow.hide()
+const toggleHoverWindow = () => {
+  if (hoverWindow.isVisible()) {
+    hoverWindow.hide()
   } else {
     showWindow()
   }
 }
 
-const showWindow = () => {
-  const position = getWindowPosition()
-  trayWindow.setPosition(position.x, position.y, false)
-  trayWindow.show()
-  trayWindow.focus()
-}
-
-const getWindowPosition = () => {
-  const windowBounds = trayWindow.getBounds()
-  const trayBounds = tray.getBounds()
-
-  // Center window horizontally below the tray icon
-  const x = Math.round(trayBounds.x + (trayBounds.width / 2) - (windowBounds.width / 2))
-
-  // Position window 4 pixels vertically below the tray icon
-  const y = Math.round(trayBounds.y + trayBounds.height + 4)
-
-  return {x: x, y: y}
+const showHoverWindow = () => {
+  hoverWindow.show()
+  hoverWindow.focus()
 }
