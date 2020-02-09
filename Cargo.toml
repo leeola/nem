@@ -3,8 +3,8 @@ members = [
   "cli",
   "electron_gui",
   "gui",
+  "make",
   "mnemosyne",
   "pwa",
-  "pwa_build",
   "server",
 ]
