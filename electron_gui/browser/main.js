@@ -28,6 +28,6 @@ async function run() {
   // modes
   await init("../pkg/electron_gui_bg.wasm");
   // And afterwards we can use all the functionality defined in wasm.
-  await greet(1, 2);
+  // await greet(1, 2);
 }
 run();

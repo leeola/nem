@@ -26,6 +26,10 @@ console_error_panic_hook = { version = "0.1.1", optional = true }
 # Unfortunately, `wee_alloc` requires nightly Rust when targeting wasm for now.
 wee_alloc = { version = "0.4.2", optional = true }
 
+#mnemosyne-gui = { path = "../gui" }
+moxie = { git = "https://github.com/anp/moxie" }
+moxie-dom = { git = "https://github.com/anp/moxie" }
+
 [dev-dependencies]
 wasm-bindgen-test = "0.2"
 
