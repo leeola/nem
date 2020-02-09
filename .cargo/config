@@ -1,0 +1,2 @@
+[alias]
+make = "run --manifest-path make/Cargo.toml --"
