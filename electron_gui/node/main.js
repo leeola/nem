@@ -4,7 +4,7 @@
 // With various tweaks to update to Electron 7.
 //
 
-let {app, protocol, BrowserWindow, Tray} = require("electron");
+let {app, protocol, BrowserWindow, Tray, globalShortcut} = require("electron");
 let {readFile} = require("fs");
 let {extname} = require("path");
 let {URL} = require("url");
@@ -50,12 +50,20 @@ protocol.registerSchemesAsPrivileged([{
 
 
 app.on("ready", () => {
+  // Register a 'CommandOrControl+X' shortcut listener.
+  const ret = globalShortcut.register('CommandOrControl+\\', () => {
+    toggleHoverWindow();
+  });
+  if (!ret) {
+    console.log('shortcut registration failed');
+  }
+
   createProtocol("app");
 
   hoverWindow = new BrowserWindow({
     width: 700,
     height: 400,
-    // show: false,
+    show: false,
     frame: false,
     fullscreenable: false,
     resizable: false,
@@ -65,20 +73,29 @@ app.on("ready", () => {
     }
   });
 
-  // TODO: auto launch this at startup in dev?
-  hoverWindow.openDevTools({mode: 'detach'})
+  // TODO: impl isDev logic
+  let isDev = true;
+  if (isDev) {
+    hoverWindow.openDevTools({mode: 'detach'});
+    // using a small delay to let the devTools open behind the window.
+    setTimeout(showHoverWindow, 500);
+  }
 
   let hover_html = path.join(__dirname, "..", "browser", "hover.html");
-  hoverWindow.loadURL(`file://${hover_html}`)
+  hoverWindow.loadURL(`file://${hover_html}`);
 
   // Hide the window when it loses focus
   hoverWindow.on("blur", () => {
     if (!hoverWindow.webContents.isDevToolsOpened()) {
-      hoverWindow.hide()
+      hoverWindow.hide();
     }
   })
 
   createTray();
+});
+
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll()
 });
 
 const createTray = () => {
@@ -99,7 +116,7 @@ const toggleHoverWindow = () => {
   if (hoverWindow.isVisible()) {
     hoverWindow.hide()
   } else {
-    showWindow()
+    showHoverWindow()
   }
 }
 
