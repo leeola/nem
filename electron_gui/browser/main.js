@@ -14,7 +14,7 @@
 import {
   greet,
   default as init
-} from "./pkg/electron_gui.js";
+} from "../pkg/electron_gui.js";
 async function run() {
   // First up we need to actually load the wasm file, so we use the
   // default export to inform it where the wasm file is located on the
@@ -26,7 +26,7 @@ async function run() {
   // Also note that the promise, when resolved, yields the wasm module's
   // exports which is the same as importing the `*_bg` module in other
   // modes
-  await init("./pkg/electron_gui_bg.wasm");
+  await init("../pkg/electron_gui_bg.wasm");
   // And afterwards we can use all the functionality defined in wasm.
   await greet(1, 2);
 }
