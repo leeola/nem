@@ -1,26 +1,41 @@
-use {moxie, moxie_dom::*};
+#![feature(track_caller)]
+
+use {
+    moxie,
+    moxie_dom::{
+        elements::{a, div, h1, header, li, nav, ul},
+        prelude::*,
+    },
+};
 
 #[topo::nested]
 pub fn base_layout() {
-    moxie::mox! {
-      <div>
-      <header role="banner">
-        <nav role="navigation">
-          <h1><a href="/">"Nem"</a></h1>
-        </nav>
-      </header>
-      </div>
-    }
+    moxie::mox! {<div>
+        <header role="banner">
+            <nav role="navigation">
+                <h1><a href="/">"Nem"</a></h1>
+            </nav>
+        </header>
+    </div>}
+}
+
+#[topo::nested]
+pub fn electron_hover_ui() {
+    moxie::mox! {<div>
+        <header role="banner">
+            <nav role="navigation">
+                <h1><a href="/">"Nem"</a></h1>
+            </nav>
+        </header>
+    </div>}
 }
 
 #[topo::nested]
 pub fn mox_test() {
     let items = vec!["foo", "bar"];
-    moxie::mox! {
-      <ul>{
+    moxie::mox! {<ul>{
         for item in items {
-          moxie::mox!(<li>{% "{}", item }</li>)
+            moxie::mox!(<li>{% "{}", item }</li>)
         }
-      }</ul>
-    }
+    }</ul>}
 }

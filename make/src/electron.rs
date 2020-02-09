@@ -9,21 +9,23 @@ pub struct OptWithCmd {
 #[derive(StructOpt)]
 #[structopt(rename_all = "kebab-case")]
 pub enum Command {
+    Build(BuildOpt),
     Run(RunOpt),
 }
 
 impl OptWithCmd {
     pub fn run_cmd(self) -> Result<()> {
         match self.cmd {
+            Command::Build(opt) => opt.run_cmd(),
             Command::Run(opt) => opt.run_cmd(),
         }
     }
 }
 
 #[derive(StructOpt)]
-pub struct RunOpt {}
+pub struct BuildOpt {}
 
-impl RunOpt {
+impl BuildOpt {
     fn run_cmd(self) -> Result<()> {
         log::info!("building wasm..");
         let cli = wasm_pack::Cli::from_iter_safe(&[
@@ -36,6 +38,17 @@ impl RunOpt {
         .expect("wasm-pack build")
         .cmd;
         wasm_pack::command::run_wasm_pack(cli).expect("wasm-pack build");
+
+        Ok(())
+    }
+}
+
+#[derive(StructOpt)]
+pub struct RunOpt {}
+
+impl RunOpt {
+    fn run_cmd(self) -> Result<()> {
+        BuildOpt {}.run_cmd()?;
 
         // TODO: impl a simple check to auto install nodejs deps?
         // Command::new("yarn")
