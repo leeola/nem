@@ -9,6 +9,7 @@ name = "mnemosyne_gui"
 path = "src/lib.rs"
 
 [dependencies]
+log = "0.4"
 
 [dependencies.moxie]
 git = "https://github.com/anp/moxie"

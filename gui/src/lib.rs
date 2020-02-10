@@ -21,6 +21,7 @@ pub fn base_layout() {
 
 #[topo::nested]
 pub fn electron_hover_ui() {
+    log::info!("log from gui entry");
     moxie::mox! {<div>
         <header role="banner">
             <nav role="navigation">
