@@ -1207,7 +1207,8 @@ name = "mnemosyne-make"
 version = "0.1.0"
 dependencies = [
  "log 0.4.8",
- "structopt",
+ "structopt 0.2.18",
+ "structopt 0.3.9",
  "wasm-pack",
 ]
 
@@ -2082,7 +2083,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "16c2cdbf9cc375f15d1b4141bc48aeef444806655cd0e904207edc8d68d86ed7"
 dependencies = [
  "clap",
- "structopt-derive",
+ "structopt-derive 0.2.18",
+]
+
+[[package]]
+name = "structopt"
+version = "0.3.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a1bcbed7d48956fcbb5d80c6b95aedb553513de0a1b451ea92679d999c010e98"
+dependencies = [
+ "clap",
+ "lazy_static 1.4.0",
+ "structopt-derive 0.4.2",
 ]
 
 [[package]]
@@ -2095,6 +2107,19 @@ dependencies = [
  "proc-macro2 0.4.30",
  "quote 0.6.13",
  "syn 0.15.44",
+]
+
+[[package]]
+name = "structopt-derive"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "095064aa1f5b94d14e635d0a5684cf140c43ae40a0fd990708d38f5d669e5f64"
+dependencies = [
+ "heck",
+ "proc-macro-error",
+ "proc-macro2 1.0.8",
+ "quote 1.0.2",
+ "syn 1.0.14",
 ]
 
 [[package]]
@@ -2547,7 +2572,7 @@ dependencies = [
  "serde_json",
  "siphasher",
  "strsim",
- "structopt",
+ "structopt 0.2.18",
  "toml",
  "walkdir",
  "which",

@@ -12,6 +12,6 @@ path = "src/main.rs"
 
 [dependencies]
 wasm-pack = "0.8"
-# wasm-pack is making me choose 0.2 :(
-structopt = "0.2"
+structopt = "0.3"
+structopt_wasm_pack = { version = "0.2", package = "structopt" }
 log = "0.4"

@@ -1,4 +1,4 @@
-use {crate::Result, std::process, structopt::StructOpt};
+use {crate::Result, std::process, structopt::StructOpt, structopt_wasm_pack::StructOpt as _};
 
 #[derive(StructOpt)]
 pub struct OptWithCmd {
