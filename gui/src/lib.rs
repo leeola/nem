@@ -3,14 +3,15 @@
 use {
     moxie,
     moxie_dom::{
-        elements::{a, div, h1, header, li, nav, ul},
+        elements::{a, div, h1, header, input, li, nav, ul},
         prelude::*,
     },
 };
 
 #[topo::nested]
 pub fn base_layout() {
-    moxie::mox! {<div>
+    moxie::mox! {
+    <div>
         <header role="banner">
             <nav role="navigation">
                 <h1><a href="/">"Nem"</a></h1>
@@ -22,7 +23,8 @@ pub fn base_layout() {
 #[topo::nested]
 pub fn electron_hover_ui() {
     log::info!("log from gui entry");
-    moxie::mox! {<div>
+    moxie::mox! {
+        <div>
         <header role="banner">
             <nav role="navigation">
                 <h1><a href="/">"Nem"</a></h1>

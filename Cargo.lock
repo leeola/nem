@@ -521,6 +521,7 @@ dependencies = [
  "moxie",
  "moxie-dom",
  "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]

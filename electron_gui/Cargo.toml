@@ -16,3 +16,4 @@ moxie-dom = { git = "https://github.com/anp/moxie" }
 wasm-bindgen = "0.2"
 console_log = "0.1"
 log = "0.4"
+web-sys = "0.3"
