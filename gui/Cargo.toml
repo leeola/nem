@@ -10,6 +10,9 @@ path = "src/lib.rs"
 
 [dependencies]
 log = "0.4"
+wasm-bindgen = "0.2"
+console_log = "0.1"
+web-sys = "0.3"
 
 [dependencies.moxie]
 git = "https://github.com/anp/moxie"

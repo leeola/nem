@@ -3,9 +3,10 @@
 use {
     moxie,
     moxie_dom::{
-        elements::{a, div, h1, header, input, li, nav, ul},
+        elements::{a, div, h1, header, li, nav, ul},
         prelude::*,
     },
+    wasm_bindgen::{prelude::*, JsCast},
 };
 
 #[topo::nested]
@@ -21,8 +22,13 @@ pub fn base_layout() {
 }
 
 #[topo::nested]
-pub fn electron_hover_ui() {
+pub fn app_entry() {
     log::info!("log from gui entry");
+    let c = Closure::wrap(Box::new(move |e: web_sys::KeyboardEvent| {
+        log::info!("key down document, {:?}", e.key());
+    }) as Box<dyn FnMut(web_sys::KeyboardEvent)>);
+    document().set_onkeydown(Some(c.as_ref().unchecked_ref()));
+    c.forget();
     moxie::mox! {
         <div>
         <header role="banner">
