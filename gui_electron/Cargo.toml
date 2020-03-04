@@ -10,7 +10,7 @@ crate-type = ["cdylib", "rlib"]
 [features]
 
 [dependencies]
-mnemosyne-gui = { path = "../gui" }
+mnemosyne-gui = { path = "../gui_dom" }
 moxie-dom = { git = "https://github.com/anp/moxie" }
 wasm-bindgen = "0.2"
 console_log = "0.1"

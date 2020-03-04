@@ -33,7 +33,7 @@ impl BuildOpt {
             "build",
             "--target",
             "web",
-            "electron_gui",
+            "gui_electron",
         ])
         .expect("wasm-pack build")
         .cmd;
@@ -59,7 +59,7 @@ impl RunOpt {
 
         log::info!("running electron..");
         process::Command::new("node_modules/.bin/electron")
-            .current_dir("electron_gui")
+            .current_dir("gui_electron")
             .args(&["."])
             .output()
             .expect("run electron");
