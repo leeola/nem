@@ -1,0 +1,24 @@
+[package]
+name = "nem-native"
+version = "0.1.0"
+authors = ["Lee Olayvar <leeola@fastmail.com>"]
+edition = "2018"
+
+[lib]
+name = "mnemosyne_desktop"
+path = "src/lib.rs"
+
+[[bin]]
+name = "nem-desktop"
+path = "src/bin/nem_desktop.rs"
+
+[dependencies]
+log = "0.4"
+env_logger = "0.7"
+# using the repo directly, as the integration example required some features that wasn't
+# available on the published crate
+iced = { git = "https://github.com/hecrj/iced" }
+iced_winit = { git = "https://github.com/hecrj/iced" }
+iced_native = { git = "https://github.com/hecrj/iced" }
+iced_wgpu = { git = "https://github.com/hecrj/iced" }
+winit = "0.22"
