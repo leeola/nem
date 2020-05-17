@@ -7,44 +7,26 @@ fn main() {
     let window = Window::new(Counter::new());
     let event_loop = window.event_loop_proxy();
     thread::spawn(move || {
-        #[derive(Debug, Copy, Clone)]
-        enum Color {
-            Red,
-            Green,
-            Blue,
-        }
-        let mut color = Color::Red;
+        use std::{
+            io::Read,
+            process::{Command, Stdio},
+        };
+        let listener = Command::new("nem-desktop-deviceinputs")
+            .stdout(Stdio::piped())
+            .stderr(Stdio::inherit())
+            .spawn()
+            .unwrap();
+        let mut listener_stdout = listener.stdout.unwrap();
+
+        let mut stdout_buf = vec![0u8; 1];
+        let mut visible = true;
         loop {
-            thread::sleep(std::time::Duration::from_secs(2));
+            listener_stdout.read_exact(&mut stdout_buf).unwrap();
+            visible = !visible;
+            log::debug!("toggling visibility, {}", visible);
             event_loop
-                .send_event(Message::WindowEvent(WindowEvent::BackgroundColor(
-                    match color {
-                        Color::Red => iced_winit::Color {
-                            r: 1.0,
-                            g: 0.0,
-                            b: 0.0,
-                            a: 1.0,
-                        },
-                        Color::Green => iced_winit::Color {
-                            r: 0.0,
-                            g: 1.0,
-                            b: 0.0,
-                            a: 1.0,
-                        },
-                        Color::Blue => iced_winit::Color {
-                            r: 0.0,
-                            g: 0.0,
-                            b: 1.0,
-                            a: 1.0,
-                        },
-                    },
-                )))
+                .send_event(Message::WindowEvent(WindowEvent::Visible(visible)))
                 .expect("event loop closed, background thread ending");
-            color = match color {
-                Color::Red => Color::Green,
-                Color::Green => Color::Blue,
-                Color::Blue => Color::Red,
-            };
         }
     });
     window.run_with_events(|message| match message {

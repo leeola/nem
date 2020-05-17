@@ -1456,7 +1456,7 @@ dependencies = [
  "tempdir",
  "termcolor 0.3.6",
  "toml",
- "uuid",
+ "uuid 0.6.5",
 ]
 
 [[package]]
@@ -2086,10 +2086,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "nem-desktop-hotkeys"
-version = "0.1.0"
-
-[[package]]
 name = "nem-native"
 version = "0.1.0"
 dependencies = [
@@ -2099,6 +2095,7 @@ dependencies = [
  "iced_wgpu",
  "iced_winit",
  "log 0.4.8",
+ "rdev",
  "winit",
 ]
 
@@ -2513,6 +2510,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "protocol"
+version = "3.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c5b1a82b25191ae2cd9e0cbc1fd2bf05b9df3acfb42a21675f5c0f3c48a73068"
+dependencies = [
+ "byteorder",
+ "error-chain",
+ "flate2",
+ "num-traits",
+ "uuid 0.7.4",
+]
+
+[[package]]
+name = "protocol-derive"
+version = "3.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9a147eeb8bd38a3db91563bfccc12d5d2929fde93a5dea5f1048a13ba08261c"
+dependencies = [
+ "proc-macro2 0.4.30",
+ "quote 0.6.13",
+ "syn 0.15.44",
+]
+
+[[package]]
 name = "qstring"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2628,6 +2649,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0a441a7a6c80ad6473bd4b74ec1c9a4c951794285bf941c2126f607c72e48211"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "rdev"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "654da30ac809243419df85b2cb530f6882eeb88fe5bf202971b8250dfdaeeab9"
+dependencies = [
+ "cocoa 0.20.0",
+ "core-foundation 0.7.0",
+ "core-foundation-sys 0.7.0",
+ "core-graphics 0.19.0",
+ "lazy_static 1.4.0",
+ "libc",
+ "winapi 0.3.8",
+ "x11",
+ "xproto",
 ]
 
 [[package]]
@@ -3515,6 +3553,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "uuid"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90dbc611eb48397705a6b0f6e917da23ae517e4d127123d2cf7674206627d32a"
+
+[[package]]
 name = "vcpkg"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4021,6 +4065,16 @@ name = "xml-rs"
 version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b07db065a5cf61a7e4ba64f29e67db906fb1787316516c4e6e5ff0fea1efcd8a"
+
+[[package]]
+name = "xproto"
+version = "1.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad85b7e7575b014bf09e63f4e9311050b6f7060e31092f11eaa201506c8d32f3"
+dependencies = [
+ "protocol",
+ "protocol-derive",
+]
 
 [[package]]
 name = "yansi"

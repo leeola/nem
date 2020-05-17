@@ -1,7 +1,6 @@
 [workspace]
 members = [
   "cli",
-  "gui_desktop_hotkeys",
   "gui_dom",
   "gui_electron",
   "gui_native",

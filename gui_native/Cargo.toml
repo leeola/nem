@@ -12,6 +12,11 @@ path = "src/lib.rs"
 name = "nem-desktop"
 path = "src/bin/nem_desktop.rs"
 
+[[bin]]
+name = "nem-desktop-deviceinputs"
+path = "src/bin/nem_desktop_deviceinputs.rs"
+required-features = ["rdev"]
+
 [dependencies]
 log = "0.4"
 env_logger = "0.7"
@@ -22,3 +27,4 @@ iced_winit = { git = "https://github.com/hecrj/iced" }
 iced_native = { git = "https://github.com/hecrj/iced" }
 iced_wgpu = { git = "https://github.com/hecrj/iced" }
 winit = "0.22"
+rdev = { version = "0.4", optional = true }
