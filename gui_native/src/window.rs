@@ -12,7 +12,10 @@ use {
 /// This is produced via the function provided to `Window::run_with_events`.
 #[derive(Debug, Clone)]
 pub enum WindowEvent {
-    Visible(bool),
+    /// Whether or not the application is hidden.
+    ///
+    /// When false, the window is activated and focused.
+    HiddenOrFocused(bool),
     Title(String),
     BackgroundColor(Color),
 }

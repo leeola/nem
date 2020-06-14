@@ -1,41 +1,52 @@
 use {
-    mnemosyne_desktop::window::{Window, WindowEvent},
+    mnemosyne_desktop::{
+        application::{Application as NemApplication, Instance},
+        window::{Window, WindowEvent},
+    },
     std::thread,
 };
 
 fn main() {
-    let window = Window::new(Counter::new());
-    let event_loop = window.event_loop_proxy();
-    thread::spawn(move || {
-        use std::{
-            io::Read,
-            process::{Command, Stdio},
-        };
-        let listener = Command::new("nem-desktop-deviceinputs")
-            .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
-            .spawn()
-            .unwrap();
-        let mut listener_stdout = listener.stdout.unwrap();
+    env_logger::init_from_env(env_logger::Env::new().filter_or("NEM_LOG", "info"));
 
-        let mut stdout_buf = vec![0u8; 1];
-        let mut visible = true;
-        loop {
-            listener_stdout.read_exact(&mut stdout_buf).unwrap();
-            visible = !visible;
-            log::debug!("toggling visibility, {}", visible);
-            event_loop
-                .send_event(Message::WindowEvent(WindowEvent::Visible(visible)))
-                .expect("event loop closed, background thread ending");
-        }
-    });
-    window.run_with_events(|message| match message {
-        Message::WindowEvent(event) => Some(event.clone()),
-        _ => None,
-    })
+    log::error!("woo");
+    // <Instance<Counter> as NemApplication>::run(());
+    Counter::run();
+
+    // let window = Window::new(Counter::new(()));
+    // let event_loop = window.event_loop_proxy();
+    // thread::spawn(move || {
+    //     use std::{
+    //         io::Read,
+    //         process::{Command, Stdio},
+    //     };
+    //     let listener = Command::new("nem-desktop-deviceinputs")
+    //         .stdout(Stdio::piped())
+    //         .stderr(Stdio::inherit())
+    //         .spawn()
+    //         .unwrap();
+    //     let mut listener_stdout = listener.stdout.unwrap();
+
+    //     let mut stdout_buf = vec![0u8; 1];
+    //     let mut visible = true;
+    //     loop {
+    //         listener_stdout.read_exact(&mut stdout_buf).unwrap();
+    //         visible = !visible;
+    //         log::debug!("toggling visibility, {}", visible);
+    //         event_loop
+    //             .send_event(Message::WindowEvent(WindowEvent::HiddenOrFocused(visible)))
+    //             .expect("event loop closed, background thread ending");
+    //     }
+    // });
+    // window.run_with_events(|message| match message {
+    //     Message::WindowEvent(event) => Some(event.clone()),
+    //     _ => None,
+    // })
 }
 
-use iced::{button, Align, Button, Column, Element, Sandbox, Text};
+use iced::{
+    button, Align, Application, Button, Column, Command, Element, Sandbox, Subscription, Text,
+};
 
 #[derive(Default)]
 pub struct Counter {
@@ -44,25 +55,30 @@ pub struct Counter {
     decrement_button: button::State,
 }
 
+use mnemosyne_desktop::subscriptions::global_hotkey::{Event as HotkeyEvent, GlobalHotkey};
+
 #[derive(Debug, Clone)]
 pub enum Message {
     IncrementPressed,
     DecrementPressed,
     WindowEvent(WindowEvent),
+    Hotkey(HotkeyEvent),
 }
 
-impl Sandbox for Counter {
+impl Application for Counter {
+    type Executor = iced_futures::executor::AsyncStd;
+    type Flags = ();
     type Message = Message;
 
-    fn new() -> Self {
-        Self::default()
+    fn new(_flags: ()) -> (Self, Command<Self::Message>) {
+        (Self::default(), Command::none())
     }
 
     fn title(&self) -> String {
         String::from("Counter - Iced")
     }
 
-    fn update(&mut self, message: Message) {
+    fn update(&mut self, message: Message) -> Command<Self::Message> {
         match message {
             Message::IncrementPressed => {
                 self.value += 1;
@@ -72,6 +88,11 @@ impl Sandbox for Counter {
             }
             _ => {}
         }
+        Command::none()
+    }
+
+    fn subscription(&self) -> Subscription<Self::Message> {
+        GlobalHotkey::subscription().map(Message::Hotkey)
     }
 
     fn view(&mut self) -> Element<Message> {

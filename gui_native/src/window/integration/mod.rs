@@ -1,10 +1,12 @@
-mod scene;
+pub mod proxy;
+pub mod scene;
 
 use scene::Scene;
 
 use iced_wgpu::{wgpu, window::SwapChain, Primitive, Renderer, Settings, Target};
 use iced_winit::{futures, mouse, winit, Cache, Clipboard, Size, UserInterface};
 
+use objc::{msg_send, sel, sel_impl};
 use winit::{
     event::{Event, ModifiersState, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
@@ -73,6 +75,9 @@ where
         *control_flow = ControlFlow::Wait;
 
         match event {
+            Event::DeviceEvent { .. } => {
+                // TODO: use device events to provide background keybinds on non-mac OSs.
+            }
             Event::WindowEvent { event, .. } => {
                 match event {
                     WindowEvent::ModifiersChanged(new_modifiers) => {
@@ -95,9 +100,6 @@ where
                 {
                     events.push(event);
                 }
-            }
-            Event::UserEvent(external_message) => {
-                external_messages.push(external_message);
             }
             Event::MainEventsCleared => {
                 // If no relevant events happened, we can simply skip this
@@ -143,8 +145,34 @@ where
                     // straightforward.
                     for message in messages {
                         match message_map(&message) {
-                            Some(super::WindowEvent::Visible(visible)) => {
-                                window.set_visible(visible);
+                            Some(super::WindowEvent::HiddenOrFocused(hidden)) => {
+                                // use ::winit::platform::macos::WindowExtMacOS;
+                                // dbg!("event loop window target?", visible);
+                                // if visible {
+                                //     window.show_application();
+                                // } else {
+                                //     window.hide_application();
+                                // }
+                                let cls = objc::runtime::Class::get("NSApplication").unwrap();
+                                let app: cocoa::base::id =
+                                    unsafe { msg_send![cls, sharedApplication] };
+                                let is_active: bool = unsafe { msg_send![app, isActive] };
+                                if is_active {
+                                    dbg!("hiding");
+                                    let cls = objc::runtime::Class::get("NSApplication").unwrap();
+                                    let app: cocoa::base::id =
+                                        unsafe { msg_send![cls, sharedApplication] };
+                                    unsafe { msg_send![app, hide: 0] }
+                                } else {
+                                    dbg!("making active");
+                                    let cls = objc::runtime::Class::get("NSApplication").unwrap();
+                                    let app: cocoa::base::id =
+                                        unsafe { msg_send![cls, sharedApplication] };
+                                    let ignore_other_apps = true;
+                                    unsafe {
+                                        msg_send![app, activateIgnoringOtherApps: ignore_other_apps]
+                                    }
+                                }
                             }
                             Some(super::WindowEvent::Title(title)) => {
                                 window.set_title(title.as_str());

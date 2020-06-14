@@ -156,85 +156,95 @@ fn main() {
         );
     });
 
-    rdev::listen(|event| {
+    rdev::grab(|event| {
         MODIFIER_STATE.with(|modifier_state| {
             BINDINGS.with(|bindings| {
                 let key = match event.event_type {
                     EventType::KeyPress(rdev::Key::Alt) => {
                         modifier_state.borrow_mut().alt_left = true;
-                        return;
+                        None
                     }
                     EventType::KeyRelease(rdev::Key::Alt) => {
                         modifier_state.borrow_mut().alt_left = false;
-                        return;
+                        None
                     }
                     EventType::KeyPress(rdev::Key::AltGr) => {
                         modifier_state.borrow_mut().alt_right = true;
-                        return;
+                        None
                     }
                     EventType::KeyRelease(rdev::Key::AltGr) => {
                         modifier_state.borrow_mut().alt_right = false;
-                        return;
+                        None
                     }
                     EventType::KeyPress(rdev::Key::ShiftLeft) => {
                         modifier_state.borrow_mut().shift_left = true;
-                        return;
+                        None
                     }
                     EventType::KeyRelease(rdev::Key::ShiftLeft) => {
                         modifier_state.borrow_mut().shift_left = false;
-                        return;
+                        None
                     }
                     EventType::KeyPress(rdev::Key::ShiftRight) => {
                         modifier_state.borrow_mut().shift_right = true;
-                        return;
+                        None
                     }
                     EventType::KeyRelease(rdev::Key::ShiftRight) => {
                         modifier_state.borrow_mut().shift_right = false;
-                        return;
+                        None
                     }
                     EventType::KeyPress(rdev::Key::ControlLeft) => {
                         modifier_state.borrow_mut().control_left = true;
-                        return;
+                        None
                     }
                     EventType::KeyRelease(rdev::Key::ControlLeft) => {
                         modifier_state.borrow_mut().control_left = false;
-                        return;
+                        None
                     }
                     EventType::KeyPress(rdev::Key::ControlRight) => {
                         modifier_state.borrow_mut().control_right = true;
-                        return;
+                        None
                     }
                     EventType::KeyRelease(rdev::Key::ControlRight) => {
                         modifier_state.borrow_mut().control_right = false;
-                        return;
+                        None
                     }
                     EventType::KeyPress(rdev::Key::MetaLeft) => {
                         modifier_state.borrow_mut().meta_left = true;
-                        return;
+                        None
                     }
                     EventType::KeyRelease(rdev::Key::MetaLeft) => {
                         modifier_state.borrow_mut().meta_left = false;
-                        return;
+                        None
                     }
                     EventType::KeyPress(rdev::Key::MetaRight) => {
                         modifier_state.borrow_mut().meta_right = true;
-                        return;
+                        None
                     }
                     EventType::KeyRelease(rdev::Key::MetaRight) => {
                         modifier_state.borrow_mut().meta_right = false;
-                        return;
+                        None
                     }
-                    EventType::KeyPress(key) => key.into(),
-                    _ => return,
+                    EventType::KeyPress(key) => Some(key.into()),
+                    _ => None,
                 };
-                if let Some(&notify_byte) = bindings.borrow().get(&(*modifier_state.borrow(), key))
-                {
-                    let mut stdout = std::io::stdout();
-                    stdout.write_all(&[notify_byte]).expect("write to stdout");
-                    stdout.flush().expect("flush stdout")
+                if let Some(key) = key {
+                    if let Some(&notify_byte) =
+                        bindings.borrow().get(&(*modifier_state.borrow(), key))
+                    {
+                        let mut stdout = std::io::stdout();
+                        stdout.write_all(&[notify_byte]).expect("write to stdout");
+                        stdout.flush().expect("flush stdout");
+                        // None captures the key bind. This prevents global keybinds
+                        None
+                    } else {
+                        // Pass the event along, do not capture it.
+                        Some(event)
+                    }
+                } else {
+                    Some(event)
                 }
-            });
-        });
+            })
+        })
     })
     .expect("listen failed")
 }

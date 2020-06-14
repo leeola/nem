@@ -15,7 +15,6 @@ path = "src/bin/nem_desktop.rs"
 [[bin]]
 name = "nem-desktop-deviceinputs"
 path = "src/bin/nem_desktop_deviceinputs.rs"
-required-features = ["rdev"]
 
 [dependencies]
 log = "0.4"
@@ -26,5 +25,14 @@ iced = { git = "https://github.com/hecrj/iced" }
 iced_winit = { git = "https://github.com/hecrj/iced" }
 iced_native = { git = "https://github.com/hecrj/iced" }
 iced_wgpu = { git = "https://github.com/hecrj/iced" }
+iced_futures = { git = "https://github.com/hecrj/iced", features = ["async-std"] }
 winit = "0.22"
-rdev = { version = "0.4", optional = true }
+async-std = { version = "1.0", features = ["unstable"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+cocoa = "0.20"
+core-foundation = "0.7"
+core-graphics = "0.19"
+dispatch = "0.2"
+objc = "0.2"
+rdev = { version = "0.4", features = ["unstable_grab"] }
