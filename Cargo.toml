@@ -1,6 +1,7 @@
 [workspace]
 members = [
   "cli",
+  "fixity",
   "gui_dom",
   "gui_electron",
   "gui_native",

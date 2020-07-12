@@ -1,0 +1,10 @@
+[package]
+name = "fixity"
+version = "0.1.0"
+authors = ["Lee Olayvar <leeola@fastmail.com>"]
+edition = "2018"
+
+[dependencies]
+sqlx = "0.3"
+refinery = "0.3"
+async-trait = "0.1"
