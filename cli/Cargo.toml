@@ -1,5 +1,5 @@
 [package]
-name = "mnemosyne-cli"
+name = "nem_cli"
 version = "0.0.1"
 authors = ["Lee Olayvar <leeola@fastmail.com>"]
 edition = "2018"
@@ -9,9 +9,12 @@ name = "nem"
 path = "src/main.rs"
 
 [features]
-default = ["db", "api"]
-api = ["mnemosyne/api"]
-db = ["mnemosyne/db", "mnemosyne/sqlite"]
+default = ["server"]
+server = []
 
 [dependencies]
-mnemosyne = { path = "../mnemosyne" }
+# Feature deps
+nem_server = { path = "../server", optional = true }
+# Standard deps
+structopt = "0.3"
+tokio = { version = "1.9", features = ["rt"] }

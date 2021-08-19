@@ -1,0 +1,43 @@
+[package]
+name = "mnemosyne-server"
+version = "0.0.1"
+authors = ["Lee Olayvar <leeola@fastmail.com>"]
+edition = "2018"
+
+[lib]
+name = "mnemosyne_server"
+path = "src/lib.rs"
+
+[[bin]]
+name = "nem-server"
+path = "src/bin/nem_server.rs"
+
+[features]
+default = ["mnemosyne/db", "mnemosyne/sqlite", "hosted", "pwa-assets"]
+pwa-assets = []
+hosted = ["acme-lib"]
+templates-reload = []
+
+[dependencies]
+mnemosyne = { path = "../mnemosyne" }
+mnemosyne-gui = { path = "../gui_dom" }
+rocket_contrib = { git = "https://github.com/SergioBenitez/Rocket", rev = "4e6a7ddd"  }
+rocket = { git = "https://github.com/SergioBenitez/Rocket", rev = "4e6a7ddd", features = ["tls"] }
+handlebars = "2.0.2"
+serde = { version = "1.0.101", features = ["derive"] }
+acme-lib = { version = "0.5.2", optional = true }
+log = "0.4.8"
+env_logger = "0.7.1"
+clap = "2.33.0"
+
+[dependencies.moxie]
+git = "https://github.com/anp/moxie"
+
+[dependencies.moxie-dom]
+git = "https://github.com/anp/moxie"
+default-features = false
+features = ["rsdom"]
+
+[build-dependencies]
+# WISHLIST: only depend on this if the PWA feature is in use.
+wasm-pack = "0.8.1"
