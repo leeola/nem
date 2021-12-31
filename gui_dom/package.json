@@ -1,0 +1,11 @@
+{
+  "name": "nem_dom",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "trunk serve"
+  },
+  "devDependencies": {
+    "tailwindcss": "^2.2.19"
+  },
+  "private": true
+}

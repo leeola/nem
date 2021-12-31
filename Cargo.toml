@@ -1,5 +1,7 @@
 [workspace]
 members = [
   "cli",
+  "nem",
+  "gui_dom",
   "server",
 ]

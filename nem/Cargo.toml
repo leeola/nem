@@ -1,12 +1,8 @@
 [package]
-name = "nem_cli"
+name = "nem"
 version = "0.0.1"
 authors = ["Lee Olayvar <leeola@fastmail.com>"]
 edition = "2018"
-
-[[bin]]
-name = "nem"
-path = "src/main.rs"
 
 [features]
 default = ["server"]
@@ -15,6 +11,3 @@ server = ["nem_server"]
 [dependencies]
 # Feature deps
 nem_server = { path = "../server", optional = true }
-# Standard deps
-structopt = "0.3"
-tokio = { version = "1.10", features = ["macros", "rt", "rt-multi-thread"] }

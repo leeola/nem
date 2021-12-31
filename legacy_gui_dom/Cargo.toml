@@ -1,0 +1,24 @@
+[package]
+name = "mnemosyne-gui"
+version = "0.0.1"
+authors = ["Lee Olayvar <leeola@fastmail.com>"]
+edition = "2018"
+
+[lib]
+name = "mnemosyne_gui"
+path = "src/lib.rs"
+
+[dependencies]
+log = "0.4"
+wasm-bindgen = "0.2"
+console_log = "0.1"
+web-sys = "0.3"
+illicit = "0.9"
+
+[dependencies.moxie]
+git = "https://github.com/anp/moxie"
+
+[dependencies.moxie-dom]
+git = "https://github.com/anp/moxie"
+default-features = false
+features = ["rsdom"]

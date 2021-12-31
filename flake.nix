@@ -15,11 +15,11 @@
           inherit system overlays;
         };
         # TODO: How can i specify extensions without using a temp var?
-        rust = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain;
-        # Not sure specifying any extensions is needed. Keeping this here for future.
-        # rust = rusttmp.override {
-        #   extensions = [ "rust-analysis" ];
-        # };
+        rusttmp = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain;
+        rust = rusttmp.override {
+          extensions = [ "rust-analysis" ];
+          targets = [ "wasm32-unknown-unknown" ];
+        };
       in
       {
         devShell = pkgs.mkShell {
@@ -31,6 +31,7 @@
             pkgs.gcc
             pkgs.openssl
             pkgs.sqlite
+            pkgs.nodejs
             pkgs.nodePackages.npm
           ];
         };

@@ -1,0 +1,11 @@
+[build]
+target = "index.html"
+dist = "dist"
+
+[[hooks]]
+stage = "build"
+command = "sh"
+command_arguments = [
+  "-c",
+  "node_modules/.bin/tailwind build -i tailwind.css -o dist/.stage/tailwind.css",
+]
