@@ -446,6 +446,8 @@ name = "nem_gui_dom"
 version = "0.1.0"
 dependencies = [
  "sycamore",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]

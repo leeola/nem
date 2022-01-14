@@ -7,5 +7,7 @@
   "devDependencies": {
     "tailwindcss": "^2.2.19"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+  }
 }

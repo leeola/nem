@@ -4,7 +4,7 @@ use structopt::StructOpt;
 #[structopt(name = "nem")]
 struct Opt {
     #[structopt(subcommand)]
-    cmd: Command,
+    _cmd: Command,
 }
 #[derive(Debug, StructOpt)]
 enum Command {

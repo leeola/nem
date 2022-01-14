@@ -1,5 +1,3 @@
-const colors = require('tailwindcss/colors')
-
 module.exports = {
   mode: 'jit',
   purge: {
@@ -7,22 +5,31 @@ module.exports = {
       "./src/**/*.rs"
     ],
   },
+  darkMode: 'media',
   theme: {
-    extend: {},
+    // extend: {},
     colors: {
-      transparent: 'transparent',
-      current: 'currentColor',
-      black: colors.black,
-      red: colors.red,
-      gray: colors.gray,
-      orange: colors.orange,
-      amber: colors.amber,
-      yellow: colors.yellow,
-      white: colors.white,
+      "black": "#2e3440",
+      "dark-gray": "#3b4252",
+      "white": "#eceff4",
+
+      "red": "#bf616a",
+
+    //   transparent: 'transparent',
+    //   current: 'currentColor',
+    //   black: colors.black,
+    //   red: '#f00',
+    //   gray: colors.gray,
+    //   orange: colors.orange,
+    //   amber: colors.amber,
+    //   yellow: colors.yellow,
+    //   white: colors.white,
     }
   },
-  variants: {
-    extend: {},
-  },
-  plugins: [],
+  plugins: [
+    // require('@tailwindcss/forms'),
+    // require('@tailwindcss/aspect-ratio'),
+    // require('@tailwindcss/typography'),
+    // require('tailwindcss-children'),
+  ],
 }
