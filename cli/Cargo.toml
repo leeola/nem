@@ -17,4 +17,4 @@ server = ["nem_server"]
 nem_server = { path = "../server", optional = true }
 # Standard deps
 structopt = "0.3"
-tokio = { version = "1.10", features = ["macros", "rt", "rt-multi-thread"] }
+tokio = { version = "1.15", features = ["macros", "rt", "rt-multi-thread"] }

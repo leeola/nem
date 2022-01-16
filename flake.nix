@@ -24,8 +24,8 @@
       {
         devShell = pkgs.mkShell {
           buildInputs = [
-            pkgs.rust-analyzer
             rust
+            pkgs.rust-analyzer
             pkgs.pkg-config
             pkgs.binutils
             pkgs.gcc
