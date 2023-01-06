@@ -17,4 +17,4 @@ server = []
 nem_server = { path = "../server", optional = true }
 # Standard deps
 structopt = "0.3"
-tokio = { version = "1.9", features = ["rt"] }
+tokio = { version = "1.18", features = ["rt"] }
